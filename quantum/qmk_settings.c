@@ -10,7 +10,9 @@
 #include "process_combo.h"
 #include "action_tapping.h"
 #include "keycode_config.h"
+#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
 #include "pointing_device_auto_mouse.h"
+#endif
 
 static int eeprom_settings_get(const qmk_settings_proto_t *proto, void *setting, size_t maxsz);
 static int eeprom_settings_set(const qmk_settings_proto_t *proto, const void *setting, size_t maxsz);
@@ -203,10 +205,10 @@ void qmk_settings_reset(void) {
     QS.tapping_toggle = TAPPING_TOGGLE;
 
 #ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
-    QS.auto_mouse_enable = get_auto_mouse_enable();
-    QS.auto_mouse_layer = get_auto_mouse_layer();
-    QS.auto_mouse_timeout = get_auto_mouse_timeout();
-    QS.auto_mouse_debounce = get_auto_mouse_debounce();
+    QS.auto_mouse_enable = 0;
+    QS.auto_mouse_layer = AUTO_MOUSE_DEFAULT_LAYER;
+    QS.auto_mouse_timeout = AUTO_MOUSE_TIME;
+    QS.auto_mouse_debounce = AUTO_MOUSE_DEBOUNCE;
 #endif
 
     eeprom_settings_save();
