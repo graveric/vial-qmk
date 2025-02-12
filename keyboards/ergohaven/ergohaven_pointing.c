@@ -183,6 +183,9 @@ void set_pointing_mode(pointing_mode_t mode) {
                     break;
             }
         }
+        if (is_hid_active()) {
+            hid_send_pointing_mode(mode);
+        }
     }
 }
 
