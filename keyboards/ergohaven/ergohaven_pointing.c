@@ -241,7 +241,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mrpt) {
     is_mouse_active = abs(mrpt.x) > 1 || abs(mrpt.y) > 1 || abs(mrpt.v) > 1 || abs(mrpt.h) > 1 || mrpt.buttons;
 #endif
 #ifdef EH_TRACKBALL_LAYERS
-    {
+    if (is_hid_active()) {
         static uint16_t last_sync = 0;
         static uint16_t acc_sync  = 0;
         static uint16_t acc       = 0;
