@@ -1,4 +1,5 @@
 #include "ergohaven_pointing.h"
+#include "hid.h"
 #include "quantum.h"
 #include "pointing_device.h"
 
@@ -43,8 +44,11 @@ void set_automouse(uint8_t layer) {
 
 bool is_mouse_active = false;
 
+static uint16_t auto_mouse_external_sync = 0;
+
 bool auto_mouse_activation(report_mouse_t mouse_report) {
-    return is_mouse_active;
+    bool external = auto_mouse_external_sync != 0 && timer_elapsed(auto_mouse_external_sync) < get_auto_mouse_timeout();
+    return external || is_mouse_active;
 }
 
 bool is_mouse_record_kb(uint16_t keycode, keyrecord_t *record) {
@@ -77,7 +81,13 @@ bool get_led_blinks(void) {
 
 void set_pointing_mode(pointing_mode_t mode) {
     if (mode != pointing_mode) {
-        pointing_mode = mode;
+        if (mode == POINTING_MODE_AUTO_MOUSE_ACTIVATE) {
+#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
+            auto_mouse_external_sync = timer_read();
+#endif // POINTING_DEVICE_AUTO_MOUSE_ENABLE
+        } else {
+            pointing_mode = mode;
+        }
         if (led_blinks) {
             switch (pointing_mode) {
                 case POINTING_MODE_NORMAL:
@@ -184,7 +194,7 @@ void set_pointing_mode(pointing_mode_t mode) {
             }
         }
         if (is_hid_active()) {
-            hid_send_pointing_mode(mode);
+            if (mode != POINTING_MODE_AUTO_MOUSE_ACTIVATE) hid_send_pointing_mode(mode);
         }
     }
 }
@@ -229,6 +239,25 @@ bool process_record_pointing(uint16_t keycode, keyrecord_t *record) {
 report_mouse_t pointing_device_task_user(report_mouse_t mrpt) {
 #ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
     is_mouse_active = abs(mrpt.x) > 1 || abs(mrpt.y) > 1 || abs(mrpt.v) > 1 || abs(mrpt.h) > 1 || mrpt.buttons;
+#endif
+#ifdef EH_TRACKBALL_LAYERS
+    {
+        static uint16_t last_sync = 0;
+        static uint16_t acc_sync  = 0;
+        static uint16_t acc       = 0;
+        if (timer_elapsed(acc_sync) < 50) {
+            acc += abs(mrpt.x);
+            acc += abs(mrpt.y);
+        } else {
+            bool active = acc > 25;
+            if (active && (last_sync == 0 || timer_elapsed(last_sync) > 500)) {
+                hid_send_pointing_mode(POINTING_MODE_AUTO_MOUSE_ACTIVATE);
+                last_sync = timer_read();
+            }
+            acc      = 20;
+            acc_sync = timer_read();
+        }
+    }
 #endif
     pointing_mode_t pmode = pointing_mode;
 

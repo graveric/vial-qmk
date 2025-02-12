@@ -11,6 +11,7 @@ typedef enum {
     POINTING_MODE_USR1,
     POINTING_MODE_USR2,
     POINTING_MODE_USR3,
+    POINTING_MODE_AUTO_MOUSE_ACTIVATE,
 } pointing_mode_t;
 
 enum {
