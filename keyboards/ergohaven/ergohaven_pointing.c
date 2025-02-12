@@ -1,5 +1,6 @@
 #include "ergohaven_pointing.h"
 #include "quantum.h"
+#include "pointing_device.h"
 
 pointing_mode_t pointing_mode = POINTING_MODE_NORMAL;
 

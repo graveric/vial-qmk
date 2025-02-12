@@ -32,6 +32,9 @@ RAW_ENABLE = yes
 UNICODE_COMMON = yes
 UNICODE_ENABLE = yes
 
+POINTING_DEVICE_ENABLE = yes
+POINTING_DEVICE_DRIVER = custom
+
 SRC += keyboards/ergohaven/ergohaven_rgb.c
 SRC += keyboards/ergohaven/ergohaven_main.c
 SRC += keyboards/ergohaven/ergohaven_ruen.c
