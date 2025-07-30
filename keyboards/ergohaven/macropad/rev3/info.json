@@ -5,17 +5,17 @@
     "maintainer": "Ergohaven",
     "usb": {
         "vid": "0xE126",
-        "pid": "0x0041",
+        "pid": "0x0042",
         "device_version": "1.0.0"
     },
     "backlight": {
-        "pin": "GP17",
+        "pin": "GP23",
         "levels": 10,
         "breathing": false
       },
     "encoder": {
         "rotary": [
-            {"pin_a": "GP27", "pin_b": "GP28"}
+            {"pin_a": "GP24", "pin_b": "GP25"}
         ]
     },
     "bootmagic": {
@@ -25,11 +25,11 @@
     "bootloader": "rp2040",
     "matrix_pins": {
         "direct": [
-            [null, null, "GP0"],
-            ["GP1",  "GP2",  "GP3"],
-            ["GP4",  "GP5",  "GP6"],
-            ["GP7",  "GP8",  "GP9"],
-            ["GP12", "GP13", "GP14"]
+            [null, null, "GP12"],
+            ["GP0", "GP1",  "GP2"],
+            ["GP3", "GP4",  "GP5"],
+            ["GP6", "GP7",  "GP8"],
+            ["GP9", "GP10", "GP11"]
         ]
     },
     "layouts": {
