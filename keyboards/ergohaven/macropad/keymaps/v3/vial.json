@@ -1,5 +1,5 @@
 {
-    "lighting": "qmk_backlight_rgblight",
+    "lighting": "vialrgb",
     "matrix": {
         "rows": 5,
         "cols": 3
