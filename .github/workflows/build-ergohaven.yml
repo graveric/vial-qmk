@@ -45,6 +45,7 @@ jobs:
           - { kb: ergohaven/k03pro/rev1/43mm, km: v1}
           - { kb: ergohaven/k03pro/rev1/65mm, km: v1}
           - { kb: ergohaven/k03pro/rev2, km: v2}
+          - { kb: ergohaven/gamer, km: v1}
 
     steps:
     - name: (actions) Checkout Vial repo
