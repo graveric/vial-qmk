@@ -91,7 +91,7 @@ void via_set_layout_options_kb(uint32_t value) {
 }
 
 void keyboard_post_init_user(void) {
-    display_init_kb();
+    if (is_keyboard_left()) display_init_kb();
     vial_config.raw = via_get_layout_options();
     via_set_layout_options_kb(vial_config.raw);
     set_led_blinks(false);
