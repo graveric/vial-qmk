@@ -63,6 +63,10 @@ __attribute__((weak)) void display_init_styles_kb(void) {
 
 __attribute__((weak)) void display_init_screens_kb(void);
 
+#ifndef QP_ROTATION
+#    define QP_ROTATION QP_ROTATION_180
+#endif
+
 bool display_init_kb(void) {
     display_enabled = false;
     dprint("display_init_kb - start\n");
@@ -72,7 +76,7 @@ bool display_init_kb(void) {
     display = qp_st7789_make_spi_device(240, 280, LCD_CS_PIN, LCD_DC_PIN, LCD_RST_PIN, 4, 3);
     qp_set_viewport_offsets(display, 0, 20);
 
-    if (!qp_init(display, QP_ROTATION_180) || !qp_lvgl_attach(display)) return display_enabled;
+    if (!qp_init(display, QP_ROTATION) || !qp_lvgl_attach(display)) return display_enabled;
 
     display_enabled = true;
     dprint("display_init_kb - initialised\n");
