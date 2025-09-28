@@ -1,8 +1,10 @@
 #include QMK_KEYBOARD_H
+#include "transactions.h"
 #include "ergohaven.h"
 #include "display.h"
 #include "ergohaven_pointing.h"
 #include "ergohaven_display.h"
+#include "ergohaven_ruen.h"
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -67,6 +69,38 @@ typedef union {
 
 static vial_config_t vial_config;
 
+typedef union {
+    uint8_t raw;
+    struct {
+        uint8_t lang : 1;
+        bool    mac : 1;
+        bool    caps_word : 1;
+    };
+} display_config_t;
+
+display_config_t display_config;
+
+typedef union {
+    uint16_t raw;
+    struct {
+        uint16_t dpi;
+    };
+} touch_config_t;
+
+touch_config_t touch_config;
+
+uint8_t split_get_lang(void) {
+    return is_keyboard_master() ? get_cur_lang() : display_config.lang;
+}
+
+bool split_get_mac(void) {
+    return is_keyboard_master() ? keymap_config.swap_lctl_lgui : display_config.mac;
+}
+
+bool split_get_caps_word(void) {
+    return is_keyboard_master() ? is_caps_word_on() : display_config.caps_word;
+}
+
 const int     DPI_TABLE[15]    = {100, 200, 300, 400, 500, 600, 800, 1000, 1200, 1600, 2000, 2500, 3200, 4000, 5000};
 const int32_t SNIPER_TABLE[15] = {2, 3, 4, 5};
 const int32_t SCROLL_TABLE[15] = {6, 8, 11, 16, 23, 32, 45, 64};
@@ -90,15 +124,98 @@ void via_set_layout_options_kb(uint32_t value) {
     set_acceleration(vial_config.acceleration);
 }
 
+void sync_touch(uint8_t in_buflen, const void* in_data, uint8_t out_buflen, void* out_data) {
+    memcpy(&touch_config, in_data, sizeof(touch_config_t));
+    pointing_device_set_cpi(touch_config.dpi);
+    touch_config.dpi = pointing_device_get_cpi();
+    memcpy(out_data, &touch_config, sizeof(touch_config_t));
+}
+
+void sync_display(uint8_t in_buflen, const void* in_data, uint8_t out_buflen, void* out_data) {
+    memcpy(&display_config, in_data, sizeof(display_config_t));
+}
+
 void housekeeping_task_user(void) {
-    if (is_display_enabled()) {
+    if (is_display_enabled() && is_keyboard_left()) {
         display_housekeeping_task();
+    }
+
+    if (!is_keyboard_left() && is_keyboard_master()) {
+        static bool is_display_on = true;
+
+        uint32_t activity_elapsed = last_input_activity_elapsed();
+        if (activity_elapsed > EH_TIMEOUT) {
+            if (is_display_on) {
+                backlight_level_noeeprom(0);
+                is_display_on = false;
+            }
+        } else {
+            if (!is_display_on) {
+                backlight_init();
+                is_display_on = true;
+            }
+        }
+    }
+
+    if (is_keyboard_left() && is_keyboard_master()) {
+        static uint32_t       last_sync = 0;
+        static touch_config_t slave     = {.raw = 0};
+
+        if (last_sync == 0 || timer_elapsed32(last_sync) > 500) {
+            if (slave.raw != touch_config.raw) {
+                if (transaction_rpc_exec(RPC_SYNC_TOUCH, sizeof(touch_config_t), &touch_config, sizeof(touch_config_t), &slave)) {
+                    dprintf("sync touch settings %d (slave %d)\n", touch_config.dpi, slave.dpi);
+                }
+                last_sync = timer_read32();
+            }
+        }
+    }
+
+    if (!is_keyboard_left() && is_keyboard_master()) {
+        {
+            static uint32_t         last_sync = 0;
+            static display_config_t slave     = {.raw = 0};
+
+            if (last_sync == 0 || timer_elapsed32(last_sync) > 500) {
+                display_config.lang      = split_get_lang();
+                display_config.mac       = split_get_mac();
+                display_config.caps_word = split_get_caps_word();
+
+                if (slave.raw != display_config.raw) {
+                    if (transaction_rpc_send(RPC_SYNC_DISPLAY, sizeof(display_config_t), &display_config)) {
+                        slave.raw = display_config.raw;
+                        dprintf("sync display settings %x\n", display_config.raw);
+                    }
+                    last_sync = timer_read32();
+                }
+            }
+        }
+
+        {
+            static uint32_t       last_sync   = 0;
+            static touch_config_t real_config = {.raw = 0};
+
+            if ((last_sync == 0 || timer_elapsed32(last_sync) > 100)) {
+                if (touch_config.raw != real_config.raw) {
+                    pointing_device_set_cpi(touch_config.dpi);
+                    real_config.dpi = pointing_device_get_cpi();
+                    dprintf("sync touch settings %d (real %d)\n", touch_config.dpi, real_config.dpi);
+                }
+                last_sync = timer_read32();
+            }
+        }
     }
 }
 
 void keyboard_post_init_user(void) {
-    if (is_keyboard_left()) display_init_kb();
+    if (is_keyboard_left()) {
+        display_init_kb();
+    }
+
     vial_config.raw = via_get_layout_options();
     via_set_layout_options_kb(vial_config.raw);
     set_led_blinks(false);
+
+    transaction_register_rpc(RPC_SYNC_TOUCH, sync_touch);
+    transaction_register_rpc(RPC_SYNC_DISPLAY, sync_display);
 }
