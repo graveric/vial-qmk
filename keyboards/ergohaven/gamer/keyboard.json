@@ -20,6 +20,11 @@
         "levels": 10,
         "breathing": false
     },
+    "encoder": {
+        "rotary": [
+            {"pin_a": "GP14", "pin_b": "GP15"}
+        ]
+    },
     "ws2812": {
         "pin": "GP20",
         "driver": "vendor"
