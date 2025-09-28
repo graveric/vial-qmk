@@ -90,15 +90,15 @@ void via_set_layout_options_kb(uint32_t value) {
     set_acceleration(vial_config.acceleration);
 }
 
+void housekeeping_task_user(void) {
+    if (is_display_enabled()) {
+        display_housekeeping_task();
+    }
+}
+
 void keyboard_post_init_user(void) {
     if (is_keyboard_left()) display_init_kb();
     vial_config.raw = via_get_layout_options();
     via_set_layout_options_kb(vial_config.raw);
     set_led_blinks(false);
-}
-
-void housekeeping_task_user(void) {
-    if (is_display_enabled()) {
-        display_housekeeping_task();
-    }
 }
