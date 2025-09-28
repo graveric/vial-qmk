@@ -23,7 +23,7 @@ AUTO_SHIFT_ENABLE = yes
 
 SPLIT_KEYBOARD = no
 SERIAL_DRIVER = vendor
-RGBLIGHT_ENABLE = yes
+RGBLIGHT_ENABLE = no
 
 # OPT_DEFS = -O2
 QUANTUM_PAINTER_ENABLE = yes
@@ -36,7 +36,6 @@ BACKLIGHT_DRIVER = pwm
 UNICODE_COMMON = yes
 UNICODE_ENABLE = yes
 
-SRC += keyboards/ergohaven/ergohaven_rgb.c
 SRC += keyboards/ergohaven/ergohaven_main.c
 SRC += keyboards/ergohaven/ergohaven_ruen.c
 SRC += keyboards/ergohaven/hid.c
