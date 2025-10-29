@@ -17,7 +17,7 @@
         {
             "name": "RuEn",
             "fields": [
-                { "type": "integer", "title": "Toggle Mode", "qsid": 100, "min": 0, "max": 3, "width": 1 },
+                { "type": "select", "title": "Toggle Mode", "qsid": 100, "variants": ["Default", "M0", "M1M2"] },
                 { "type": "boolean", "title": "MacOS Layout", "qsid": 101, "bit": 0 }
             ]
         }
