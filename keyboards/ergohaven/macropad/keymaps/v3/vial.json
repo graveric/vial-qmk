@@ -12,5 +12,14 @@
             ["0,2",{"x": 0.25},"3,0","3,1","3,2"],
             ["0,0\n\n\n\n\n\n\n\n\ne",{"x": 0.25},"4,0","4,1","4,2"]
         ]
-    }
+    },
+    "settings": [
+        {
+            "name": "RuEn",
+            "fields": [
+                { "type": "integer", "title": "Toggle Mode", "qsid": 100, "min": 0, "max": 3, "width": 1 },
+                { "type": "boolean", "title": "MacOS Layout", "qsid": 101, "bit": 0 }
+            ]
+        }
+    ]
 }

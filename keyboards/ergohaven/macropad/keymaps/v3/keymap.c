@@ -1,10 +1,12 @@
 #include QMK_KEYBOARD_H
 #include "ergohaven.h"
+#include "qmk_settings.h"
+#include "ergohaven_ruen.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT(
                         KC_MUTE,
-      KC_7, KC_8,       KC_9,
+      QK_BOOT, KC_8,       KC_9,
       KC_4, KC_5,       KC_6,
       KC_1, KC_2,       KC_3,
       KC_0, LAYER_PREV, LAYER_NEXT
@@ -40,3 +42,48 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
   [3] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
 };
 #endif
+
+#define DECLARE_SETTING_NOTIFY(id, _get, _set, _notify)  { .qsid=id, .get=_get, .set=_set, .notify=_notify }
+#define DECLARE_SETTING(id, _get, _set) DECLARE_SETTING_NOTIFY(id, _get, _set, NULL)
+#define DECLARE_STATIC_SETTING_NOTIFY(id, field, notify_)  { .qsid=id, .ptr=&QS.field, .sz=sizeof(QS.field), .get=eeprom_settings_get, .set=eeprom_settings_set, .notify=notify_ }
+#define DECLARE_STATIC_SETTING(id, field) DECLARE_STATIC_SETTING_NOTIFY(id, field, NULL)
+#define DECLARE_STATIC_BITSETTING(id, field, bit_) { .qsid=id, .ptr=&QS.field, .sz=sizeof(QS.field), .bit=bit_, .get=eeprom_settings_getbit, .set=eeprom_settings_setbit }
+
+static int ruen_toggle_get(const qmk_settings_proto_t *proto, void *setting, size_t maxsz) {
+    uint8_t mode = get_ruen_toggle_mode();
+    if (maxsz < sizeof(mode))
+        return -1;
+    memcpy(setting, &mode, sizeof(mode));
+    return 0;
+}
+
+static int ruen_toggle_set(const qmk_settings_proto_t *proto, const void *setting, size_t maxsz) {
+    uint8_t mode;
+    if (maxsz < sizeof(mode))
+        return -1;
+    memcpy(&mode, setting, sizeof(mode));
+    set_ruen_toggle_mode(mode);
+    return 0;
+}
+
+static int ruen_macos_get(const qmk_settings_proto_t *proto, void *setting, size_t maxsz) {
+    bool mac = get_ruen_mac_layout();
+    if (maxsz < sizeof(mac))
+        return -1;
+    memcpy(setting, &mac, sizeof(mac));
+    return 0;
+}
+
+static int ruen_macos_set(const qmk_settings_proto_t *proto, const void *setting, size_t maxsz) {
+    bool mac;
+    if (maxsz < sizeof(mac))
+        return -1;
+    memcpy(&mac, setting, sizeof(mac));
+    set_ruen_mac_layout(mac);
+    return 0;
+}
+
+qmk_settings_proto_t kb_protos[KB_SETTINGS_NPROTOS] PROGMEM = {
+   DECLARE_SETTING(100, ruen_toggle_get, ruen_toggle_set),
+   DECLARE_SETTING(101, ruen_macos_get, ruen_macos_set),
+};
