@@ -1,4 +1,5 @@
 #include "ergohaven.h"
+#include "ergohaven_settings.h"
 #include "ergohaven_ruen.h"
 #include "ergohaven_oled.h"
 #include "ergohaven_rgb.h"
@@ -7,34 +8,6 @@
 #include "hid.h"
 #include "version.h"
 
-typedef union {
-    uint32_t raw;
-    struct {
-        uint8_t ruen_toggle_mode : 2;
-        bool    ruen_mac_layout : 1;
-    };
-} kb_config_t;
-
-kb_config_t kb_config;
-
-void kb_config_update(kb_config_t new_config) {
-    if (new_config.raw != kb_config.raw) {
-        kb_config = new_config;
-        eeconfig_update_kb(kb_config.raw);
-    }
-}
-
-void kb_config_update_ruen_toggle_mode(uint8_t mode) {
-    kb_config_t new_config      = kb_config;
-    new_config.ruen_toggle_mode = mode;
-    kb_config_update(new_config);
-}
-
-void kb_config_update_ruen_mac_layout(bool mac_layout) {
-    kb_config_t new_config     = kb_config;
-    new_config.ruen_mac_layout = mac_layout;
-    kb_config_update(new_config);
-}
 
 #ifdef AUDIO_ENABLE
 float base_sound[][2] = SONG(TERMINAL_SOUND);
@@ -247,9 +220,7 @@ void keyboard_post_init_kb(void) {
     debug_enable = true;
 #endif
 
-    kb_config.raw = eeconfig_read_kb();
-    set_ruen_toggle_mode(kb_config.ruen_toggle_mode);
-    set_ruen_mac_layout(kb_config.ruen_mac_layout);
+    init_kb_settings();
 
 #ifdef RGBLIGHT_ENABLE
     keyboard_post_init_rgb();

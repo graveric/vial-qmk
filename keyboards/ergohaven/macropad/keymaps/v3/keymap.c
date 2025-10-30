@@ -83,7 +83,43 @@ static int ruen_macos_set(const qmk_settings_proto_t *proto, const void *setting
     return 0;
 }
 
+static int layer_name_get(const qmk_settings_proto_t *proto, void *setting, size_t maxsz) {
+    // bool mac = get_ruen_mac_layout();
+    // if (maxsz < sizeof(mac))
+    //     return -1;
+    // memcpy(setting, &mac, sizeof(mac));
+    sprintf(setting, "Test");
+    return 0;
+}
+
+static int layer_name_set(const qmk_settings_proto_t *proto, const void *setting, size_t maxsz) {
+    // bool mac;
+    // if (maxsz < sizeof(mac))
+        // return -1;
+    // memcpy(&mac, setting, sizeof(mac));
+    // set_ruen_mac_layout(mac);
+    dprintf("layer_name_set %d %s\n", proto->qsid - 200, (const char*)setting);
+
+    return 0;
+}
+
 qmk_settings_proto_t kb_protos[KB_SETTINGS_NPROTOS] PROGMEM = {
    DECLARE_SETTING(100, ruen_toggle_get, ruen_toggle_set),
    DECLARE_SETTING(101, ruen_macos_get, ruen_macos_set),
+   DECLARE_SETTING(200, layer_name_get, layer_name_set),
+   DECLARE_SETTING(201, layer_name_get, layer_name_set),
+   DECLARE_SETTING(202, layer_name_get, layer_name_set),
+   DECLARE_SETTING(203, layer_name_get, layer_name_set),
+   DECLARE_SETTING(204, layer_name_get, layer_name_set),
+   DECLARE_SETTING(205, layer_name_get, layer_name_set),
+   DECLARE_SETTING(206, layer_name_get, layer_name_set),
+   DECLARE_SETTING(207, layer_name_get, layer_name_set),
+   DECLARE_SETTING(208, layer_name_get, layer_name_set),
+   DECLARE_SETTING(209, layer_name_get, layer_name_set),
+   DECLARE_SETTING(210, layer_name_get, layer_name_set),
+   DECLARE_SETTING(211, layer_name_get, layer_name_set),
+   DECLARE_SETTING(212, layer_name_get, layer_name_set),
+   DECLARE_SETTING(213, layer_name_get, layer_name_set),
+   DECLARE_SETTING(214, layer_name_get, layer_name_set),
+   DECLARE_SETTING(215, layer_name_get, layer_name_set),
 };
