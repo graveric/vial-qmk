@@ -17,9 +17,9 @@
 
 #define WEAR_LEVELING_BACKING_SIZE 16384 // increase EEPROM size
 
-#define EECONFIG_KB_DATA_SIZE 32
+#define EECONFIG_KB_DATA_SIZE (4 + 16 * 16)
 #define KB_SETTINGS
-#define KB_SETTINGS_NPROTOS 18
+#define KB_SETTINGS_NPROTOS (2 + 16)
 
 #define OLED_FONT_H "ergohaven_font.c"
 #define OLED_TIMEOUT 0

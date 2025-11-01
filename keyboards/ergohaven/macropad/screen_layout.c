@@ -6,18 +6,6 @@
 LV_FONT_DECLARE(ergohaven_symbols_20);
 LV_FONT_DECLARE(ergohaven_symbols_28);
 
-static const char *PROGMEM LAYER_NAME[] = {
-    "ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN",
-};
-
-const char *layer_upper_name(uint8_t layer) {
-    if (layer < 16) {
-        return LAYER_NAME[layer];
-    } else {
-        return "UNDEFINED";
-    }
-}
-
 uint16_t get_keycode(int layer, int row, int col) {
     uint16_t keycode = dynamic_keymap_get_keycode(layer, row, col);
     if (keycode == KC_TRANSPARENT) keycode = dynamic_keymap_get_keycode(0, row, col);

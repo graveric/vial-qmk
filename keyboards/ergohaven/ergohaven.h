@@ -77,10 +77,6 @@ enum custom_keycodes {
 
 uint8_t get_current_layer(void);
 
-const char* layer_name(uint8_t layer);
-
-const char* layer_upper_name(uint8_t layer);
-
 uint8_t split_get_lang(void);
 
 bool split_get_mac(void);

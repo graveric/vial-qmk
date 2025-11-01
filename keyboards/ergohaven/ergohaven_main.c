@@ -321,62 +321,6 @@ uint8_t get_current_layer(void) {
     return get_highest_layer(layer_state | default_layer_state);
 }
 
-static const char* PROGMEM LAYER_NAME[] = {
-    // clang-format off
-    "Base ",
-    "Lower",
-    "Raise",
-    "Adjst",
-    "Four ",
-    "Five ",
-    "Six  ",
-    "Seven",
-    "Eight",
-    "Nine ",
-    "Ten  ",
-    "Elevn",
-    "Twlve",
-    "Thrtn",
-    "Frtn ",
-    "Fiftn",
-    // clang-format on
-};
-
-static const char* PROGMEM LAYER_UPPER_NAME[] = {
-    // clang-format off
-    "BASE ",
-    "LOWER",
-    "RAISE",
-    "ADJST",
-    "FOUR ",
-    "FIVE ",
-    "SIX  ",
-    "SEVEN",
-    "EIGHT",
-    "NINE ",
-    "TEN  ",
-    "ELEVN",
-    "TWLVE",
-    "THRTN",
-    "FRTN ",
-    "FIFTN",
-    // clang-format on
-};
-
-__attribute__((weak)) const char* layer_name(uint8_t layer) {
-    if (layer >= 0 && layer <= 15)
-        return LAYER_NAME[layer];
-    else
-        return "Undef";
-}
-
-__attribute__((weak)) const char* layer_upper_name(uint8_t layer) {
-    if (layer >= 0 && layer <= 15)
-        return LAYER_UPPER_NAME[layer];
-    else
-        return "UNDEF";
-}
-
 __attribute__((weak)) uint8_t split_get_lang(void) {
     return get_cur_lang();
 }

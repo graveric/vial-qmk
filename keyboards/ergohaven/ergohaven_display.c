@@ -5,6 +5,7 @@
 #include "qp.h"
 #include "ergohaven_ruen.h"
 #include "ergohaven_symbols.h"
+#include "ergohaven_settings.h"
 #include "ergohaven.h"
 
 LV_FONT_DECLARE(ergohaven_symbols_20);
@@ -108,9 +109,8 @@ void display_turn_off(void) {
 /* Common helpers */
 
 const char *get_layer_label(uint8_t layer) {
-    const char *layer_name = layer_upper_name(layer);
     static char buf[32];
-    sprintf(buf, EH_SYMBOL_LAYER " %s", layer_name);
+    sprintf(buf, EH_SYMBOL_LAYER " %s", layer_name(layer));
     return buf;
 }
 
