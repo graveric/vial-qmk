@@ -2,9 +2,19 @@
 #include "ergohaven_keycode_str.h"
 #include "lvgl_helpers.h"
 #include "ergohaven.h"
+#include "ergohaven_settings.h"
 
 LV_FONT_DECLARE(ergohaven_symbols_20);
 LV_FONT_DECLARE(ergohaven_symbols_28);
+
+__attribute__((weak)) void kb_settings_init_layer_labels(void) {
+    static const char *PROGMEM default_layer_names[] = {
+        "ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN",
+    };
+    for (int i = 0; i < DYNAMIC_KEYMAP_LAYER_COUNT; ++i) {
+        eeconfig_update_kb_datablock(default_layer_names[i], 4 + i * LAYER_LABEL_SIZE, LAYER_LABEL_SIZE);
+    }
+}
 
 uint16_t get_keycode(int layer, int row, int col) {
     uint16_t keycode = dynamic_keymap_get_keycode(layer, row, col);

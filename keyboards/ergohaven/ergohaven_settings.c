@@ -14,26 +14,7 @@ typedef union {
 
 kb_config_t kb_config;
 
-char layer_names[DYNAMIC_KEYMAP_LAYER_COUNT][LAYER_LABEL_SIZE] = {
-    // clang-format off
-    "BASE",
-    "LOWER",
-    "RAISE",
-    "ADJST",
-    "FOUR",
-    "FIVE",
-    "SIX",
-    "SEVEN",
-    "EIGHT",
-    "NINE",
-    "TEN",
-    "ELEVN",
-    "TWLVE",
-    "THRTN",
-    "FRTN",
-    "FIFTN",
-    // clang-format on
-};
+char layer_names[DYNAMIC_KEYMAP_LAYER_COUNT][LAYER_LABEL_SIZE];
 
 void kb_config_update(kb_config_t new_config) {
     if (new_config.raw != kb_config.raw) {
@@ -63,9 +44,17 @@ bool kb_settings_ruen_mac_layout() {
     return kb_config.ruen_mac_layout;
 }
 
+__attribute__((weak)) void kb_settings_init_layer_labels(void) {
+    static const char *PROGMEM default_layer_names[] = {
+        "BASE", "LOWER", "RAISE", "ADJST", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVN", "TWLVE", "THRTN", "FRTN", "FIFTN",
+    };
+    for (int i = 0; i < DYNAMIC_KEYMAP_LAYER_COUNT; ++i) {
+        eeconfig_update_kb_datablock(default_layer_names[i], 4 + i * LAYER_LABEL_SIZE, LAYER_LABEL_SIZE);
+    }
+}
+
 void eeconfig_init_kb(void) {
-    for (int i = 0; i < DYNAMIC_KEYMAP_LAYER_COUNT; ++i)
-        eeconfig_update_kb_datablock(layer_names[i], 4 + i * LAYER_LABEL_SIZE, LAYER_LABEL_SIZE);
+    kb_settings_init_layer_labels();
     eeconfig_init_user();
 }
 
