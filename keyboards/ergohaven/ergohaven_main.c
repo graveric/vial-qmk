@@ -220,7 +220,7 @@ void keyboard_post_init_kb(void) {
     debug_enable = true;
 #endif
 
-    init_kb_settings();
+    kb_settings_init();
 
 #ifdef RGBLIGHT_ENABLE
     keyboard_post_init_rgb();

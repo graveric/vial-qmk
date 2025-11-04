@@ -3,14 +3,16 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-void init_kb_settings(void);
+#define LAYER_LABEL_SIZE 16
 
-uint8_t kb_config_ruen_toggle_mode(void);
+void kb_settings_init(void);
 
-bool kb_config_ruen_mac_layout(void);
+uint8_t kb_settings_ruen_toggle_mode(void);
 
-void kb_config_update_ruen_toggle_mode(uint8_t mode);
+bool kb_settings_ruen_mac_layout(void);
 
-void kb_config_update_ruen_mac_layout(bool mac_layout);
+void kb_settings_ruen_toggle_mode_set(uint8_t mode);
 
-const char* layer_name(uint8_t layer);
+void kb_settings_ruen_mac_layout_set(bool mac_layout);
+
+const char *layer_name(uint8_t layer);
