@@ -14,6 +14,8 @@ typedef union {
 
 kb_config_t kb_config;
 
+#define KB_CFG_SIZE (sizeof(kb_config))
+
 char layer_names[DYNAMIC_KEYMAP_LAYER_COUNT][LAYER_LABEL_SIZE];
 
 void kb_config_update(kb_config_t new_config) {
@@ -49,7 +51,7 @@ __attribute__((weak)) void kb_settings_init_layer_labels(void) {
         "BASE", "LOWER", "RAISE", "ADJST", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVN", "TWLVE", "THRTN", "FRTN", "FIFTN",
     };
     for (int i = 0; i < DYNAMIC_KEYMAP_LAYER_COUNT; ++i) {
-        eeconfig_update_kb_datablock(default_layer_names[i], 4 + i * LAYER_LABEL_SIZE, LAYER_LABEL_SIZE);
+        eeconfig_update_kb_datablock(default_layer_names[i], KB_CFG_SIZE + i * LAYER_LABEL_SIZE, LAYER_LABEL_SIZE);
     }
 }
 
@@ -61,7 +63,7 @@ void eeconfig_init_kb(void) {
 void kb_settings_init(void) {
     eeconfig_read_kb_datablock(&kb_config, 0, sizeof(kb_config_t));
     for (int i = 0; i < DYNAMIC_KEYMAP_LAYER_COUNT; ++i)
-        eeconfig_read_kb_datablock(layer_names[i], 4 + i * LAYER_LABEL_SIZE, LAYER_LABEL_SIZE);
+        eeconfig_read_kb_datablock(layer_names[i], KB_CFG_SIZE + i * LAYER_LABEL_SIZE, LAYER_LABEL_SIZE);
 }
 
 #define DECLARE_SETTING_NOTIFY(id, _get, _set, _notify) {.qsid = id, .get = _get, .set = _set, .notify = _notify}
@@ -105,25 +107,18 @@ const char *layer_name(uint8_t layer) {
 }
 
 static int layer_name_get(const qmk_settings_proto_t *proto, void *setting, size_t maxsz) {
-    // bool mac = get_ruen_mac_layout();
-    // if (maxsz < sizeof(mac))
-    //     return -1;
-    // memcpy(setting, &mac, sizeof(mac));
     int layer = proto->qsid - 200;
-    sprintf(setting, layer_names[layer]);
+    if (layer < 0 || layer >= DYNAMIC_KEYMAP_LAYER_COUNT) return -1;
+    strcpy(setting, layer_names[layer]);
     return 0;
 }
 
 static int layer_name_set(const qmk_settings_proto_t *proto, const void *setting, size_t maxsz) {
-    // bool mac;
-    // if (maxsz < sizeof(mac))
-    // return -1;
-    // memcpy(&mac, setting, sizeof(mac));
-    // set_ruen_mac_layout(mac);
     int layer = proto->qsid - 200;
+    if (layer < 0 || layer >= DYNAMIC_KEYMAP_LAYER_COUNT) return -1;
     dprintf("layer_name_set %d %s\n", layer, (const char *)setting);
-    sprintf(layer_names[layer], (const char *)setting);
-    eeconfig_update_kb_datablock(layer_names[layer], 4 + LAYER_LABEL_SIZE * layer, LAYER_LABEL_SIZE);
+    snprintf(layer_names[layer], sizeof(layer_names[layer]), (const char *)setting);
+    eeconfig_update_kb_datablock(layer_names[layer], KB_CFG_SIZE + LAYER_LABEL_SIZE * layer, LAYER_LABEL_SIZE);
     return 0;
 }
 
