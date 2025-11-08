@@ -40,6 +40,7 @@ SRC += keyboards/ergohaven/ergohaven_main.c
 SRC += keyboards/ergohaven/ergohaven_ruen.c
 SRC += keyboards/ergohaven/hid.c
 SRC += keyboards/ergohaven/ergohaven_pointing.c
+SRC += keyboards/ergohaven/ergohaven_settings.c
 
 SRC += keyboards/ergohaven/ergohaven_display.c
 SRC += keyboards/ergohaven/lvgl_helpers.c
