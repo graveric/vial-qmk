@@ -41,16 +41,11 @@ void screen_layout_init(void) {
     use_flex_column(screen_layout);
     lv_obj_set_scrollbar_mode(screen_layout, LV_SCROLLBAR_MODE_OFF);
 
-    label_layer_small = lv_label_create(screen_layout);
-    lv_label_set_text(label_layer_small, "");
-    lv_obj_set_style_pad_top(label_layer_small, 25, 0);
-    lv_obj_set_style_pad_bottom(label_layer_small, 25, 0);
-    lv_obj_set_style_text_color(label_layer_small, accent_color_blue, 0);
-    lv_obj_set_style_text_font(label_layer_small, &ergohaven_symbols_28, LV_PART_MAIN);
-
     lv_obj_t *cont = lv_obj_create(screen_layout);
-    lv_obj_set_size(cont, 232, 250);
+    lv_obj_set_size(cont, 240, 230);
     // lv_obj_center(cont);
+    lv_obj_set_style_pad_top(cont, 5, 0);
+    lv_obj_set_style_pad_bottom(cont, 5, 0);
     lv_obj_set_flex_flow(cont, LV_FLEX_FLOW_ROW_WRAP);
     int32_t v = 0;
     lv_obj_set_style_pad_row(cont, v, 0);
@@ -61,23 +56,30 @@ void screen_layout_init(void) {
     for (uint32_t i = 0; i < 29; i++) {
         if (i == 0) {
             lv_obj_t *obj = lv_obj_create(cont);
-            lv_obj_set_size(obj, 19, 45);
+            lv_obj_set_size(obj, 20, 45);
             lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
             lv_obj_add_style(obj, &style_screen, 0);
             lv_obj_set_style_border_opa(obj, 0, 0);
         }
         lv_obj_t *obj = lv_obj_create(cont);
-        lv_obj_set_size(obj, 38, 45);
+        lv_obj_set_size(obj, 40, 45);
         lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
         lv_obj_add_style(obj, &style_screen, 0);
         lv_obj_set_style_border_width(obj, 1, 0);
 
         key_labels[i] = lv_label_create(obj);
         lv_obj_center(key_labels[i]);
-        lv_obj_set_style_text_font(key_labels[i], &ergohaven_symbols_20, LV_PART_MAIN);
+        lv_obj_set_style_text_font(key_labels[i], &ergohaven_symbols_28, LV_PART_MAIN);
         lv_obj_set_style_text_align(key_labels[i], LV_TEXT_ALIGN_CENTER, 0);
         lv_label_set_text(key_labels[i], "");
     }
+
+    label_layer_small = lv_label_create(screen_layout);
+    lv_label_set_text(label_layer_small, "");
+    lv_obj_set_style_pad_top(label_layer_small, 0, 0);
+    lv_obj_set_style_pad_bottom(label_layer_small, 0, 0);
+    // lv_obj_set_style_text_color(label_layer_small, accent_color_blue, 0);
+    lv_obj_set_style_text_font(label_layer_small, &ergohaven_symbols_28, LV_PART_MAIN);
 }
 
 static uint8_t prev_layer         = 255;
@@ -87,6 +89,13 @@ void screen_layout_load(void) {
     prev_layer         = 255;
     update_label_index = 0;
     lv_scr_load(screen_layout);
+}
+
+size_t utf8len(const char *s) {
+    size_t len = 0;
+    for (; *s; ++s)
+        if ((*s & 0xC0) != 0x80) ++len;
+    return len;
 }
 
 void screen_layout_housekeep(void) {
@@ -109,8 +118,15 @@ void screen_layout_housekeep(void) {
     };
 
     uint16_t keycode = KC_TRANSPARENT;
-    keycode = get_keycode(layer, TABLE[update_label_index][0], TABLE[update_label_index][1]);
-    lv_label_set_text(key_labels[update_label_index], keycode_to_str(keycode));
+    keycode          = get_keycode(layer, TABLE[update_label_index][0], TABLE[update_label_index][1]);
+    const char *text = keycode_to_str(keycode);
+    int         len  = utf8len(text);
+    if (len <= 2)
+        lv_obj_set_style_text_font(key_labels[update_label_index], &ergohaven_symbols_28, LV_PART_MAIN);
+    else
+        lv_obj_set_style_text_font(key_labels[update_label_index], &ergohaven_symbols_20, LV_PART_MAIN);
+
+    lv_label_set_text(key_labels[update_label_index], text);
     update_label_index += 1;
 }
 
