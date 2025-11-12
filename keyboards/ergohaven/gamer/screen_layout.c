@@ -4,7 +4,7 @@
 #include "ergohaven.h"
 #include "ergohaven_settings.h"
 
-LV_FONT_DECLARE(ergohaven_symbols_20);
+LV_FONT_DECLARE(ergohaven_symbols_18);
 LV_FONT_DECLARE(ergohaven_symbols_28);
 
 __attribute__((weak)) void kb_settings_init_layer_labels(void) {
@@ -124,7 +124,7 @@ void screen_layout_housekeep(void) {
     if (len <= 2)
         lv_obj_set_style_text_font(key_labels[update_label_index], &ergohaven_symbols_28, LV_PART_MAIN);
     else
-        lv_obj_set_style_text_font(key_labels[update_label_index], &ergohaven_symbols_20, LV_PART_MAIN);
+        lv_obj_set_style_text_font(key_labels[update_label_index], &ergohaven_symbols_18, LV_PART_MAIN);
 
     lv_label_set_text(key_labels[update_label_index], text);
     update_label_index += 1;

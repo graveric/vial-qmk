@@ -515,33 +515,33 @@ const char *keycode_to_str(uint16_t keycode) {
     if (ctrl && shift && alt && gui)
         mod_str = "CSAG\n";
     else if (shift && alt && gui)
-        mod_str = "SAG\n";
+        mod_str = "󰘶󰘵\n";
     else if (ctrl && alt && gui)
-        mod_str = "CAG\n";
+        mod_str = "󰘴󰘵\n";
     else if (ctrl && shift && gui)
-        mod_str = "CSG\n";
+        mod_str = "󰘴󰘶\n";
     else if (ctrl && shift && alt)
-        mod_str = "CSA\n";
+        mod_str = "󰘴󰘶󰘵\n";
     else if (alt && gui)
-        mod_str = "󰘵  \n";
+        mod_str = "󰘵\n";
     else if (shift && gui)
-        mod_str = "󰘶  \n";
+        mod_str = "󰘶\n";
     else if (shift && alt)
-        mod_str = "󰘶 󰘵 \n";
+        mod_str = "󰘶󰘵\n";
     else if (ctrl && gui)
-        mod_str = "󰘴  \n";
+        mod_str = "󰘴\n";
     else if (ctrl && shift)
-        mod_str = "󰘴 󰘶 \n";
+        mod_str = "󰘴󰘶\n";
     else if (ctrl && alt)
-        mod_str = "󰘴 󰘵 \n";
+        mod_str = "󰘴󰘵\n";
     else if (ctrl)
-        mod_str = "󰘴 ";
+        mod_str = "󰘴";
     else if (shift)
-        mod_str = "󰘶 ";
+        mod_str = "󰘶";
     else if (alt)
-        mod_str = "󰘵 ";
+        mod_str = "󰘵";
     else if (gui)
-        mod_str = " ";
+        mod_str = "";
     else
         mod_str = "";
     static char buf[32];
