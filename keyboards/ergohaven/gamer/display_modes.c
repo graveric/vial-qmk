@@ -5,8 +5,86 @@
 #include "ergohaven.h"
 #include "ergohaven_symbols.h"
 #include "ergohaven_display.h"
+#include "lvgl_helpers.h"
 
 extern const eh_screen_t eh_screen_layout;
+
+/* Screen splash */
+
+static lv_obj_t *screen_splash2;
+
+LV_IMG_DECLARE(anim_on_00);
+LV_IMG_DECLARE(anim_on_01);
+LV_IMG_DECLARE(anim_on_02);
+LV_IMG_DECLARE(anim_on_03);
+LV_IMG_DECLARE(anim_on_04);
+LV_IMG_DECLARE(anim_on_05);
+LV_IMG_DECLARE(anim_on_06);
+LV_IMG_DECLARE(anim_on_07);
+LV_IMG_DECLARE(anim_on_08);
+LV_IMG_DECLARE(anim_on_09);
+LV_IMG_DECLARE(anim_on_10);
+LV_IMG_DECLARE(anim_on_11);
+LV_IMG_DECLARE(anim_on_12);
+LV_IMG_DECLARE(anim_on_13);
+LV_IMG_DECLARE(anim_on_14);
+LV_IMG_DECLARE(anim_on_15);
+LV_IMG_DECLARE(anim_on_16);
+LV_IMG_DECLARE(anim_on_17);
+LV_IMG_DECLARE(anim_on_18);
+
+static const lv_img_dsc_t * anim_on[] = {
+    &anim_on_00,
+    &anim_on_01,
+    &anim_on_02,
+    &anim_on_03,
+    &anim_on_04,
+    &anim_on_05,
+    &anim_on_06,
+    &anim_on_07,
+    &anim_on_08,
+    &anim_on_09,
+    &anim_on_10,
+    &anim_on_11,
+    &anim_on_12,
+    &anim_on_13,
+    &anim_on_14,
+    &anim_on_15,
+    &anim_on_16,
+    &anim_on_17,
+    &anim_on_18,
+};
+
+void splash2_screen_init(void) {
+    screen_splash2 = lv_obj_create(NULL);
+    lv_obj_add_style(screen_splash2, &style_screen, 0);
+    use_flex_column(screen_splash2);
+
+    lv_obj_t * anim = lv_animimg_create(screen_splash2);
+
+    lv_animimg_set_src(anim, (lv_img_dsc_t**)anim_on, sizeof(anim_on)/sizeof(anim_on[0]));
+    lv_animimg_set_duration(anim, 1500);
+    lv_animimg_set_repeat_count(anim, 1);
+
+    lv_obj_align(anim, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_style_pad_top(anim, 0, 0);
+    lv_obj_set_style_pad_bottom(anim, 0, 0);
+    lv_animimg_start(anim);
+}
+
+void splash2_screen_load(void) {
+    lv_scr_load(screen_splash2);
+}
+
+void splash2_screen_housekeep(void) {
+    lv_scr_load(screen_splash2);
+}
+
+const eh_screen_t eh_screen_splash2 = {
+    .init      = splash2_screen_init,
+    .load      = splash2_screen_load,
+    .housekeep = splash2_screen_housekeep,
+};
 
 static uint32_t screen_timer = 0;
 
@@ -24,11 +102,11 @@ static screen_t change_screen_state = SCREEN_OFF;
 eh_screen_t current_screen;
 
 void display_init_screens_kb(void) {
-    eh_screen_splash.init();
+    eh_screen_splash2.init();
     eh_screen_layout.init();
     eh_screen_home.init();
     eh_screen_volume.init();
-    current_screen      = eh_screen_splash;
+    current_screen      = eh_screen_splash2;
     change_screen_state = SCREEN_SPLASH;
     screen_state        = SCREEN_SPLASH;
     current_screen.load();
@@ -108,7 +186,7 @@ void display_housekeeping_task(void) {
         screen_state = change_screen_state;
         switch (screen_state) {
             case SCREEN_SPLASH:
-                current_screen = eh_screen_splash;
+                current_screen = eh_screen_splash2;
                 display_turn_on();
                 break;
             case SCREEN_HOME:
