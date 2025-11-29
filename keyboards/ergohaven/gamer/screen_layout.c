@@ -32,7 +32,11 @@ uint16_t get_encoder_keycode(int layer, int encoder, bool clockwise) {
 
 static lv_obj_t *screen_layout;
 
-static lv_obj_t *key_labels[29];
+#define NLABELS 29
+static lv_obj_t *key_labels[NLABELS];
+static bool      label_big[NLABELS];
+static uint16_t  label_kc[NLABELS];
+static char      label_text[NLABELS][16];
 static lv_obj_t *label_layer_small;
 
 void screen_layout_init(void) {
@@ -42,10 +46,15 @@ void screen_layout_init(void) {
     lv_obj_set_scrollbar_mode(screen_layout, LV_SCROLLBAR_MODE_OFF);
 
     lv_obj_t *cont = lv_obj_create(screen_layout);
-    lv_obj_set_size(cont, 240, 230);
-    // lv_obj_center(cont);
-    lv_obj_set_style_pad_top(cont, 5, 0);
-    lv_obj_set_style_pad_bottom(cont, 5, 0);
+    lv_obj_set_style_pad_top(screen_layout, 15, 0);
+    lv_obj_set_style_pad_bottom(screen_layout, 10, 0);
+    lv_obj_set_style_pad_right(screen_layout, 5, 0);
+
+    const int CELL_W = 38;
+    const int CELL_H = 44;
+    lv_obj_set_size(cont, CELL_W * 6 + 2, CELL_H * 5 + 2);
+    lv_obj_set_style_pad_top(cont, 0, 0);
+    lv_obj_set_style_pad_bottom(cont, 0, 0);
     lv_obj_set_flex_flow(cont, LV_FLEX_FLOW_ROW_WRAP);
     int32_t v = 0;
     lv_obj_set_style_pad_row(cont, v, 0);
@@ -53,16 +62,16 @@ void screen_layout_init(void) {
     lv_obj_add_style(cont, &style_container, 0);
     lv_obj_set_scrollbar_mode(cont, LV_SCROLLBAR_MODE_OFF);
 
-    for (uint32_t i = 0; i < 29; i++) {
+    for (uint32_t i = 0; i < NLABELS; i++) {
         if (i == 0) {
             lv_obj_t *obj = lv_obj_create(cont);
-            lv_obj_set_size(obj, 20, 45);
+            lv_obj_set_size(obj, CELL_W / 2, CELL_H);
             lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
             lv_obj_add_style(obj, &style_screen, 0);
             lv_obj_set_style_border_opa(obj, 0, 0);
         }
         lv_obj_t *obj = lv_obj_create(cont);
-        lv_obj_set_size(obj, 40, 45);
+        lv_obj_set_size(obj, CELL_W, CELL_H);
         lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
         lv_obj_add_style(obj, &style_screen, 0);
         lv_obj_set_style_border_width(obj, 1, 0);
@@ -71,7 +80,9 @@ void screen_layout_init(void) {
         lv_obj_center(key_labels[i]);
         lv_obj_set_style_text_font(key_labels[i], &ergohaven_symbols_28, LV_PART_MAIN);
         lv_obj_set_style_text_align(key_labels[i], LV_TEXT_ALIGN_CENTER, 0);
-        lv_label_set_text(key_labels[i], "");
+        lv_label_set_text_static(key_labels[i], "");
+        label_big[i] = true;
+        label_kc[i]  = 0;
     }
 
     label_layer_small = lv_label_create(screen_layout);
@@ -82,12 +93,12 @@ void screen_layout_init(void) {
     lv_obj_set_style_text_font(label_layer_small, &ergohaven_symbols_28, LV_PART_MAIN);
 }
 
-static uint8_t prev_layer         = 255;
-static int     update_label_index = 0;
+static uint8_t prev_layer = 255;
+static int     lbl_idx    = 0;
 
 void screen_layout_load(void) {
-    prev_layer         = 255;
-    update_label_index = 0;
+    prev_layer = 255;
+    lbl_idx    = 0;
     lv_scr_load(screen_layout);
 }
 
@@ -99,17 +110,24 @@ size_t utf8len(const char *s) {
 }
 
 void screen_layout_housekeep(void) {
+    static uint32_t update_timer = 0;
+    if (timer_elapsed32(update_timer) < 5) // prevent long display updates
+        return;
+
     uint8_t layer = get_current_layer();
     if (layer != prev_layer) {
         prev_layer = layer;
         lv_label_set_text(label_layer_small, get_layer_label(layer));
-        update_label_index = 0;
+        update_timer = timer_read32();
+        lbl_idx      = 0;
         return;
     }
 
-    if (update_label_index >= 29) return;
+    if (lbl_idx >= NLABELS) {
+        lbl_idx = 0;
+    }
 
-    const uint8_t TABLE[29][2] = {
+    const uint8_t TABLE[NLABELS][2] = {
         {0, 4}, {0, 3}, {0, 2}, {0, 1}, {0, 0},         //
         {0, 5}, {1, 4}, {1, 3}, {1, 2}, {1, 1}, {1, 0}, //
         {1, 5}, {2, 4}, {2, 3}, {2, 2}, {2, 1}, {2, 0}, //
@@ -117,17 +135,23 @@ void screen_layout_housekeep(void) {
         {3, 5}, {4, 5}, {4, 4}, {4, 3}, {4, 2}, {4, 1}, //
     };
 
-    uint16_t keycode = KC_TRANSPARENT;
-    keycode          = get_keycode(layer, TABLE[update_label_index][0], TABLE[update_label_index][1]);
-    const char *text = keycode_to_str(keycode);
-    int         len  = utf8len(text);
-    if (len <= 2)
-        lv_obj_set_style_text_font(key_labels[update_label_index], &ergohaven_symbols_28, LV_PART_MAIN);
-    else
-        lv_obj_set_style_text_font(key_labels[update_label_index], &ergohaven_symbols_18, LV_PART_MAIN);
+    uint16_t keycode = get_keycode(layer, TABLE[lbl_idx][0], TABLE[lbl_idx][1]);
+    if (keycode != label_kc[lbl_idx]) {
+        get_keycode_str(label_text[lbl_idx], keycode);
+        int len = utf8len(label_text[lbl_idx]);
 
-    lv_label_set_text(key_labels[update_label_index], text);
-    update_label_index += 1;
+        if (len <= 2 && !label_big[lbl_idx]) {
+            label_big[lbl_idx] = true;
+            lv_obj_set_style_text_font(key_labels[lbl_idx], &ergohaven_symbols_28, LV_PART_MAIN);
+        } else if (len > 2 && label_big[lbl_idx]) {
+            label_big[lbl_idx] = false;
+            lv_obj_set_style_text_font(key_labels[lbl_idx], &ergohaven_symbols_18, LV_PART_MAIN);
+        }
+        lv_label_set_text_static(key_labels[lbl_idx], label_text[lbl_idx]);
+        label_kc[lbl_idx] = keycode;
+        update_timer      = timer_read32();
+    }
+    lbl_idx += 1;
 }
 
 const eh_screen_t eh_screen_layout = {
