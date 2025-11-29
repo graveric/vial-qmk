@@ -24,14 +24,6 @@ LV_IMG_DECLARE(anim_on_07);
 LV_IMG_DECLARE(anim_on_08);
 LV_IMG_DECLARE(anim_on_09);
 LV_IMG_DECLARE(anim_on_10);
-LV_IMG_DECLARE(anim_on_11);
-LV_IMG_DECLARE(anim_on_12);
-LV_IMG_DECLARE(anim_on_13);
-LV_IMG_DECLARE(anim_on_14);
-LV_IMG_DECLARE(anim_on_15);
-LV_IMG_DECLARE(anim_on_16);
-LV_IMG_DECLARE(anim_on_17);
-LV_IMG_DECLARE(anim_on_18);
 
 static const lv_img_dsc_t * anim_on[] = {
     &anim_on_00,
@@ -45,14 +37,7 @@ static const lv_img_dsc_t * anim_on[] = {
     &anim_on_08,
     &anim_on_09,
     &anim_on_10,
-    &anim_on_11,
-    &anim_on_12,
-    &anim_on_13,
-    &anim_on_14,
-    &anim_on_15,
-    &anim_on_16,
-    &anim_on_17,
-    &anim_on_18,
+    &anim_on_10,
 };
 
 void splash2_screen_init(void) {
