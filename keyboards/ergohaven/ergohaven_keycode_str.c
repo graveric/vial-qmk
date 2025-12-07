@@ -54,28 +54,25 @@ const char *basic_keycode_to_str(uint16_t keycode) {
         case KC_SLASH:
             return "/";
         case KC_CAPS_LOCK:
-            return "CpsLk";
-        case KC_F1 ... KC_F12:
-            sprintf(buf, "F%d", keycode - KC_F1 + 1);
-            return buf;
+            return "CpL";
         case KC_PRINT_SCREEN:
             return EH_SYMBOL_IMAGE;
         case KC_SCROLL_LOCK:
-            return "ScrLk";
+            return "ScL";
         case KC_PAUSE:
-            return "Pause";
+            return "Pau";
         case KC_INSERT:
             return "Ins";
         case KC_HOME:
             return "Home";
         case KC_PAGE_UP:
-            return "Pg" EH_SYMBOL_ANGLES_UP;
+            return "Pg" EH_SYMBOL_UP;
         case KC_DELETE:
             return "Del";
         case KC_END:
             return "End";
         case KC_PAGE_DOWN:
-            return "Pg" EH_SYMBOL_ANGLES_DOWN;
+            return "Pg" EH_SYMBOL_DOWN;
         case KC_RIGHT:
             return EH_SYMBOL_RIGHT;
         case KC_LEFT:
@@ -85,7 +82,7 @@ const char *basic_keycode_to_str(uint16_t keycode) {
         case KC_UP:
             return EH_SYMBOL_UP;
         case KC_NUM_LOCK:
-            return "NumLk";
+            return "NmL";
         case KC_KP_SLASH:
             return EH_SYMBOL_DIVIDE;
         case KC_KP_ASTERISK:
@@ -109,6 +106,9 @@ const char *basic_keycode_to_str(uint16_t keycode) {
             return EH_SYMBOL_POWER;
         case KC_KP_EQUAL:
             return "="; //
+        case KC_F1 ... KC_F12:
+            sprintf(buf, "F%d", keycode - KC_F1 + 1);
+            return buf;
         case KC_F13 ... KC_F24:
             sprintf(buf, "F%d", keycode - KC_F13 + 13);
             return buf;
@@ -169,9 +169,9 @@ const char *basic_keycode_to_str(uint16_t keycode) {
         case KC_SYSTEM_POWER:
             return EH_SYMBOL_POWER;
         case KC_SYSTEM_SLEEP:
-            return "System_Sleep";
+            return EH_SYMBOL_SLEEP;
         case KC_SYSTEM_WAKE:
-            return "System_Wake";
+            return EH_SYMBOL_WAKE;
         case KC_AUDIO_MUTE:
             return EH_SYMBOL_VOLUME_MUTE;
         case KC_AUDIO_VOL_UP:
@@ -197,19 +197,19 @@ const char *basic_keycode_to_str(uint16_t keycode) {
         case KC_MY_COMPUTER:
             return EH_SYMBOL_COMPUTER;
         case KC_WWW_SEARCH:
-            return EH_SYMBOL_GLOBE " " EH_SYMBOL_SEARCH;
+            return EH_SYMBOL_GLOBE EH_SYMBOL_SEARCH;
         case KC_WWW_HOME:
-            return EH_SYMBOL_GLOBE " " EH_SYMBOL_HOME;
+            return EH_SYMBOL_GLOBE EH_SYMBOL_HOME;
         case KC_WWW_BACK:
-            return EH_SYMBOL_GLOBE " " EH_SYMBOL_ROTATE_LEFT;
+            return EH_SYMBOL_GLOBE EH_SYMBOL_ROTATE_LEFT;
         case KC_WWW_FORWARD:
-            return EH_SYMBOL_GLOBE " " EH_SYMBOL_ROTATE_RIGHT;
+            return EH_SYMBOL_GLOBE EH_SYMBOL_ROTATE_RIGHT;
         case KC_WWW_STOP:
-            return EH_SYMBOL_GLOBE " " EH_SYMBOL_CLOSE;
+            return EH_SYMBOL_GLOBE EH_SYMBOL_CLOSE;
         case KC_WWW_REFRESH:
-            return EH_SYMBOL_GLOBE " " EH_SYMBOL_REFRESH;
+            return EH_SYMBOL_GLOBE EH_SYMBOL_REFRESH;
         case KC_WWW_FAVORITES:
-            return EH_SYMBOL_GLOBE " " EH_SYMBOL_HEART;
+            return EH_SYMBOL_GLOBE EH_SYMBOL_HEART;
         case KC_MEDIA_FAST_FORWARD:
             return EH_SYMBOL_NEXT;
         case KC_MEDIA_REWIND:
@@ -227,13 +227,13 @@ const char *basic_keycode_to_str(uint16_t keycode) {
         case KC_LAUNCHPAD:
             return "Launchpad";
         case KC_MS_UP:
-            return EH_SYMBOL_MOUSE " " EH_SYMBOL_UP;
+            return EH_SYMBOL_MOUSE EH_SYMBOL_UP;
         case KC_MS_DOWN:
-            return EH_SYMBOL_MOUSE " " EH_SYMBOL_DOWN;
+            return EH_SYMBOL_MOUSE EH_SYMBOL_DOWN;
         case KC_MS_LEFT:
-            return EH_SYMBOL_MOUSE " " EH_SYMBOL_LEFT;
+            return EH_SYMBOL_MOUSE EH_SYMBOL_LEFT;
         case KC_MS_RIGHT:
-            return EH_SYMBOL_MOUSE " " EH_SYMBOL_RIGHT;
+            return EH_SYMBOL_MOUSE EH_SYMBOL_RIGHT;
         case KC_MS_BTN1:
             return EH_SYMBOL_MOUSE " 1";
         case KC_MS_BTN2:
@@ -251,19 +251,19 @@ const char *basic_keycode_to_str(uint16_t keycode) {
         case KC_MS_BTN8:
             return EH_SYMBOL_MOUSE " 8";
         case KC_MS_WH_UP:
-            return EH_SYMBOL_MOUSE " " EH_SYMBOL_UP;
+            return EH_SYMBOL_MOUSE " " EH_SYMBOL_ANGLES_UP;
         case KC_MS_WH_DOWN:
-            return EH_SYMBOL_MOUSE " " EH_SYMBOL_DOWN;
+            return EH_SYMBOL_MOUSE " " EH_SYMBOL_ANGLES_DOWN;
         case KC_MS_WH_LEFT:
-            return EH_SYMBOL_MOUSE " " EH_SYMBOL_LEFT;
+            return EH_SYMBOL_MOUSE " " EH_SYMBOL_ANGLES_LEFT;
         case KC_MS_WH_RIGHT:
-            return EH_SYMBOL_MOUSE " " EH_SYMBOL_RIGHT;
+            return EH_SYMBOL_MOUSE " " EH_SYMBOL_ANGLES_RIGHT;
         case KC_MS_ACCEL0:
-            return EH_SYMBOL_MOUSE " Acc0";
+            return EH_SYMBOL_MOUSE "A0";
         case KC_MS_ACCEL1:
-            return EH_SYMBOL_MOUSE " Acc1";
+            return EH_SYMBOL_MOUSE "A1";
         case KC_MS_ACCEL2:
-            return EH_SYMBOL_MOUSE " Acc2";
+            return EH_SYMBOL_MOUSE "A2";
         case KC_LEFT_CTRL:
         case KC_RIGHT_CTRL:
             return EH_SYMBOL_CTL;
@@ -350,19 +350,19 @@ bool special_keycode_str(char *buf, uint16_t keycode) {
             sprintf(buf, EH_SYMBOL_KEYBOARD "Rst");
             break;
         case QK_LAYER_LOCK:
-            sprintf(buf, EH_SYMBOL_LAYER "Lock");
+            sprintf(buf, EH_SYMBOL_LAYER "\nLock");
             break;
         case QK_TRI_LAYER_LOWER:
-            sprintf(buf, EH_SYMBOL_LAYER "Tri\nLower");
+            sprintf(buf, EH_SYMBOL_LAYER "Tr\nLow");
             break;
         case QK_TRI_LAYER_UPPER:
-            sprintf(buf, EH_SYMBOL_LAYER "Tri\nUpper");
+            sprintf(buf, EH_SYMBOL_LAYER "Tr\nUp");
             break;
         case QK_TO ... QK_TO_MAX:
             sprintf(buf, "TO\n" EH_SYMBOL_LAYER "%d", keycode - QK_TO);
             break;
         case QK_MOMENTARY ... QK_MOMENTARY_MAX:
-            sprintf(buf, "MO\n" EH_SYMBOL_LAYER "%d", keycode - QK_MOMENTARY);
+            sprintf(buf, EH_SYMBOL_LAYER "%d", keycode - QK_MOMENTARY);
             break;
         case QK_PERSISTENT_DEF_LAYER ... QK_PERSISTENT_DEF_LAYER_MAX:
             sprintf(buf, "PDF\n" EH_SYMBOL_LAYER "%d", keycode - QK_PERSISTENT_DEF_LAYER);
@@ -386,6 +386,82 @@ bool special_keycode_str(char *buf, uint16_t keycode) {
             break;
         }
 
+        case BL_ON:
+            sprintf(buf, EH_SYMBOL_BL EH_SYMBOL_ON);
+            break;
+        case BL_OFF:
+            sprintf(buf, EH_SYMBOL_BL EH_SYMBOL_OFF);
+            break;
+        case BL_TOGG:
+            sprintf(buf, EH_SYMBOL_BL);
+            break;
+        case BL_STEP:
+            sprintf(buf, EH_SYMBOL_BL EH_SYMBOL_ANGLES_RIGHT);
+            break;
+        case BL_DOWN:
+            sprintf(buf, EH_SYMBOL_BL EH_SYMBOL_DOWN);
+            break;
+        case BL_UP:
+            sprintf(buf, EH_SYMBOL_BL EH_SYMBOL_UP);
+            break;
+        case BL_BRTG:
+            sprintf(buf, EH_SYMBOL_BL "\nBrTg");
+            break;
+
+        case RM_ON:
+            sprintf(buf, EH_SYMBOL_RGB EH_SYMBOL_ON);
+            break;
+        case RM_OFF:
+            sprintf(buf, EH_SYMBOL_RGB EH_SYMBOL_OFF);
+            break;
+        case RM_TOGG:
+        case UG_TOGG:
+            sprintf(buf, EH_SYMBOL_RGB);
+            break;
+        case RM_NEXT:
+        case UG_NEXT:
+            sprintf(buf, EH_SYMBOL_RGB EH_SYMBOL_ANGLES_RIGHT);
+            break;
+        case RM_PREV:
+        case UG_PREV:
+            sprintf(buf, EH_SYMBOL_RGB EH_SYMBOL_ANGLES_LEFT);
+            break;
+        case RM_VALD:
+        case UG_VALD:
+            sprintf(buf, EH_SYMBOL_RGB "\nVal-");
+            break;
+        case RM_VALU:
+        case UG_VALU:
+            sprintf(buf, EH_SYMBOL_RGB "\nVal+");
+            break;
+        case RM_SPDU:
+        case UG_SPDU:
+            sprintf(buf, EH_SYMBOL_RGB "\nSpd-");
+            break;
+        case RM_SPDD:
+        case UG_SPDD:
+            sprintf(buf, EH_SYMBOL_RGB "\nSpd+");
+            break;
+        case RM_SATU:
+        case UG_SATU:
+            sprintf(buf, EH_SYMBOL_RGB "\nSat+");
+            break;
+        case RM_SATD:
+        case UG_SATD:
+            sprintf(buf, EH_SYMBOL_RGB "\nSat-");
+            break;
+        case RM_HUEU:
+        case UG_HUEU:
+            sprintf(buf, EH_SYMBOL_RGB "\nHue+");
+            break;
+        case RM_HUED:
+        case UG_HUED:
+            sprintf(buf, EH_SYMBOL_RGB "\nHue-");
+            break;
+        case RGB_M_P...RGB_M_TW:
+            sprintf(buf, "Undf");
+            break;
+
         case QK_MACRO ... QK_MACRO_MAX:
             sprintf(buf, "M%d", keycode - QK_MACRO);
             break;
@@ -407,7 +483,7 @@ bool special_keycode_str(char *buf, uint16_t keycode) {
             break;
 
         case EH_PRINFO:
-            sprintf(buf, "Print\nInfo");
+            sprintf(buf, "Prnt\nInfo");
             break;
         case WRD_PRV:
             sprintf(buf, "Word\n" EH_SYMBOL_ANGLES_LEFT);
@@ -429,29 +505,33 @@ bool special_keycode_str(char *buf, uint16_t keycode) {
             break;
 
         case EH_LED_BL:
-            sprintf(buf, "Tg Led\nBlinks");
+            sprintf(buf, "Led\nBlnk");
             break;
         case EH_SNP:
-            sprintf(buf, "Sniper\nMode");
+            sprintf(buf, "Snpr\nMode");
             break;
         case EH_SCR:
-            sprintf(buf, "Scroll\nMode");
+            sprintf(buf, "Scrl\nMode");
             break;
         case EH_TXT:
             sprintf(buf, "Text\nMode");
             break;
         case EH_USR1:
-            sprintf(buf, "Mode\nUser 1");
+            sprintf(buf, "Mode\nUsr1");
             break;
         case EH_USR2:
-            sprintf(buf, "Mode\nUser 2");
+            sprintf(buf, "Mode\nUsr2");
             break;
         case EH_USR3:
-            sprintf(buf, "Mode\nUser 3");
+            sprintf(buf, "Mode\nUsr3");
+            break;
+        case EH_RSRV1:
+        case EH_RSRV2 ... EH_RSRV7:
+            sprintf(buf, "Rsrv");
             break;
 
         case LG_TOGGLE:
-            sprintf(buf, "RuEn\nToggle");
+            sprintf(buf, "RuEn\nTg");
             break;
         case LG_SYNC:
             sprintf(buf, "RuEn\nSync");
@@ -547,16 +627,16 @@ bool special_keycode_str(char *buf, uint16_t keycode) {
             sprintf(buf, "RuEn\nMod");
             break;
         case LG_STORE:
-            sprintf(buf, "RuEn\nStore");
+            sprintf(buf, "RuEn\nStor");
             break;
         case LG_REVERT:
-            sprintf(buf, "RuEn\nRevert");
+            sprintf(buf, "RuEn\nRvrt");
             break;
         case LG_PERC:
             sprintf(buf, "RuEn\n%%");
             break;
         case LG_TG_MAC:
-            sprintf(buf, "RuEn\nMac Tg");
+            sprintf(buf, "RuEn\nMac");
             break;
         case LG_RU_BE:
             sprintf(buf, "RuEn\nБ");
