@@ -5,6 +5,7 @@
 #include "ergohaven_settings.h"
 
 LV_FONT_DECLARE(ergohaven_symbols_18);
+LV_FONT_DECLARE(ergohaven_symbols_22);
 LV_FONT_DECLARE(ergohaven_symbols_28);
 
 const char *default_layer_label(uint8_t layer) {
@@ -76,7 +77,7 @@ void screen_layout_init(void) {
 
         key_labels[i] = lv_label_create(obj);
         lv_obj_center(key_labels[i]);
-        lv_obj_set_style_text_font(key_labels[i], &ergohaven_symbols_28, LV_PART_MAIN);
+        lv_obj_set_style_text_font(key_labels[i], &ergohaven_symbols_22, LV_PART_MAIN);
         lv_obj_set_style_text_align(key_labels[i], LV_TEXT_ALIGN_CENTER, 0);
         lv_label_set_text_static(key_labels[i], "");
         label_big[i] = true;
@@ -100,10 +101,24 @@ void screen_layout_load(void) {
     lv_scr_load(screen_layout);
 }
 
-size_t utf8len(const char *s) {
+size_t visible_len(const char *s) {
     size_t len = 0;
-    for (; *s; ++s)
-        if ((*s & 0xC0) != 0x80) ++len;
+    while (*s != '\0') {
+        unsigned char p = (unsigned char)(*s);
+        if (p < 0x80) { // 1-byte ASCII
+            len += 1;
+            s++;
+        } else if (p < 0xE0) { // 2-byte
+            len += 1;
+            s += 2;
+        } else if (p < 0xF0) { // 3-byte
+            len += 2;
+            s += 3;
+        } else { // 4-byte (simplified, assumes valid input)
+            len += 2;
+            s += 4;
+        }
+    }
     return len;
 }
 
@@ -137,12 +152,12 @@ void screen_layout_housekeep(void) {
     uint16_t keycode = get_keycode(layer, TABLE[lbl_idx][0], TABLE[lbl_idx][1]);
     if (keycode != label_kc[lbl_idx]) {
         get_keycode_str(label_text[lbl_idx], keycode);
-        int len = utf8len(label_text[lbl_idx]);
+        int len = visible_len(label_text[lbl_idx]);
 
-        if (len <= 2 && !label_big[lbl_idx]) {
+        if (len <= 3 && !label_big[lbl_idx]) {
             label_big[lbl_idx] = true;
-            lv_obj_set_style_text_font(key_labels[lbl_idx], &ergohaven_symbols_28, LV_PART_MAIN);
-        } else if (len > 2 && label_big[lbl_idx]) {
+            lv_obj_set_style_text_font(key_labels[lbl_idx], &ergohaven_symbols_22, LV_PART_MAIN);
+        } else if (len > 3 && label_big[lbl_idx]) {
             label_big[lbl_idx] = false;
             lv_obj_set_style_text_font(key_labels[lbl_idx], &ergohaven_symbols_18, LV_PART_MAIN);
         }
