@@ -347,7 +347,13 @@ bool special_keycode_str(char *buf, uint16_t keycode) {
             sprintf(buf, "?");
             break;
         case QK_BOOT:
-            sprintf(buf, EH_SYMBOL_KEYBOARD "Rst");
+            sprintf(buf, EH_SYMBOL_KEYBOARD "\nFlsh");
+            break;
+        case QK_RBT:
+            sprintf(buf, EH_SYMBOL_KEYBOARD "\nRbt");
+            break;
+        case EE_CLR:
+            sprintf(buf, EH_SYMBOL_KEYBOARD "\nClr");
             break;
         case QK_LAYER_LOCK:
             sprintf(buf, EH_SYMBOL_LAYER "\nLock");
