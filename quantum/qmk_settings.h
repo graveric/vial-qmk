@@ -151,6 +151,7 @@ typedef struct qmk_settings_proto_t {
 
 #ifdef KB_SETTINGS
 extern qmk_settings_proto_t kb_protos[KB_SETTINGS_NPROTOS] PROGMEM;
+void kb_settings_reset(void);
 #endif
 
 void qmk_settings_init(void);

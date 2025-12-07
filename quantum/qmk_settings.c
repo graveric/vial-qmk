@@ -250,6 +250,10 @@ void qmk_settings_reset(void) {
 
     eeprom_settings_save();
 
+#ifdef KB_SETTINGS
+    kb_settings_reset();
+#endif
+
     /* must call clear_keyboard for the NKRO setting to not cause stuck keys */
     clear_keyboard();
     keymap_config.raw = 0;

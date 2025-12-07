@@ -7,13 +7,11 @@
 LV_FONT_DECLARE(ergohaven_symbols_18);
 LV_FONT_DECLARE(ergohaven_symbols_28);
 
-__attribute__((weak)) void kb_settings_init_layer_labels(void) {
-    static const char *PROGMEM default_layer_names[] = {
-        "ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN",
+const char *default_layer_label(uint8_t layer) {
+    static const char *PROGMEM default_layer_labels[] = {
+        "MAIN", "EXTRA", "RAISE", "ADJST", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVN", "TWLVE", "THRTN", "FRTN", "FIFTN",
     };
-    for (int i = 0; i < DYNAMIC_KEYMAP_LAYER_COUNT; ++i) {
-        eeconfig_update_kb_datablock(default_layer_names[i], 4 + i * LAYER_LABEL_SIZE, LAYER_LABEL_SIZE);
-    }
+    return default_layer_labels[layer];
 }
 
 uint16_t get_keycode(int layer, int row, int col) {
@@ -115,11 +113,12 @@ void screen_layout_housekeep(void) {
         return;
 
     uint8_t layer = get_current_layer();
-    if (layer != prev_layer) {
+    if (layer != prev_layer || layer_name_updated) {
         prev_layer = layer;
         lv_label_set_text(label_layer_small, get_layer_label(layer));
-        update_timer = timer_read32();
-        lbl_idx      = 0;
+        update_timer       = timer_read32();
+        lbl_idx            = 0;
+        layer_name_updated = false;
         return;
     }
 

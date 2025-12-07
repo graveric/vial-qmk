@@ -46,17 +46,27 @@ bool kb_settings_ruen_mac_layout() {
     return kb_config.ruen_mac_layout;
 }
 
-__attribute__((weak)) void kb_settings_init_layer_labels(void) {
-    static const char *PROGMEM default_layer_names[] = {
+__attribute__((weak)) const char *default_layer_label(uint8_t layer) {
+    static const char *PROGMEM default_layer_labels[] = {
         "BASE", "LOWER", "RAISE", "ADJST", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVN", "TWLVE", "THRTN", "FRTN", "FIFTN",
     };
+    return default_layer_labels[layer];
+}
+
+void kb_settings_reset_layer_labels(void) {
     for (int i = 0; i < DYNAMIC_KEYMAP_LAYER_COUNT; ++i) {
-        eeconfig_update_kb_datablock(default_layer_names[i], KB_CFG_SIZE + i * LAYER_LABEL_SIZE, LAYER_LABEL_SIZE);
+        eeconfig_update_kb_datablock(default_layer_label(i), KB_CFG_SIZE + i * LAYER_LABEL_SIZE, LAYER_LABEL_SIZE);
     }
+    layer_name_updated = true;
+}
+
+void kb_settings_reset(void) {
+    kb_settings_reset_layer_labels();
+    kb_settings_init();
 }
 
 void eeconfig_init_kb(void) {
-    kb_settings_init_layer_labels();
+    kb_settings_reset();
     eeconfig_init_user();
 }
 
@@ -113,12 +123,15 @@ static int layer_name_get(const qmk_settings_proto_t *proto, void *setting, size
     return 0;
 }
 
+bool layer_name_updated = false;
+
 static int layer_name_set(const qmk_settings_proto_t *proto, const void *setting, size_t maxsz) {
     int layer = proto->qsid - 200;
     if (layer < 0 || layer >= DYNAMIC_KEYMAP_LAYER_COUNT) return -1;
     dprintf("layer_name_set %d %s\n", layer, (const char *)setting);
     snprintf(layer_names[layer], sizeof(layer_names[layer]), (const char *)setting);
     eeconfig_update_kb_datablock(layer_names[layer], KB_CFG_SIZE + LAYER_LABEL_SIZE * layer, LAYER_LABEL_SIZE);
+    layer_name_updated = true;
     return 0;
 }
 
