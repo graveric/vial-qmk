@@ -7,13 +7,11 @@
 LV_FONT_DECLARE(ergohaven_symbols_20);
 LV_FONT_DECLARE(ergohaven_symbols_28);
 
-__attribute__((weak)) void kb_settings_init_layer_labels(void) {
-    static const char *PROGMEM default_layer_names[] = {
-        "ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN",
+const char *default_layer_label(uint8_t layer) {
+    static const char *PROGMEM default_layer_labels[] = {
+        "NUM", "NAV", "MOUSE", "MEDIA", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN",
     };
-    for (int i = 0; i < DYNAMIC_KEYMAP_LAYER_COUNT; ++i) {
-        eeconfig_update_kb_datablock(default_layer_names[i], 4 + i * LAYER_LABEL_SIZE, LAYER_LABEL_SIZE);
-    }
+    return default_layer_labels[layer];
 }
 
 uint16_t get_keycode(int layer, int row, int col) {
@@ -32,7 +30,11 @@ uint16_t get_encoder_keycode(int layer, int encoder, bool clockwise) {
 
 static lv_obj_t *screen_layout;
 
-static lv_obj_t *key_labels[15];
+#define NLABELS 15
+static lv_obj_t *key_labels[NLABELS];
+static bool      label_big[NLABELS];
+static uint16_t  label_kc[NLABELS];
+static char      label_text[NLABELS][16];
 static lv_obj_t *label_layer_small;
 
 void screen_layout_init(void) {
@@ -49,8 +51,11 @@ void screen_layout_init(void) {
     lv_obj_set_style_text_font(label_layer_small, &ergohaven_symbols_28, LV_PART_MAIN);
 
     lv_obj_t *cont = lv_obj_create(screen_layout);
+    // lv_obj_set_style_pad_top(screen_layout, 15, 0);
+    // lv_obj_set_style_pad_bottom(screen_layout, 10, 0);
+    // lv_obj_set_style_pad_right(screen_layout, 5, 0);
+
     lv_obj_set_size(cont, 232, 250);
-    // lv_obj_center(cont);
     lv_obj_set_flex_flow(cont, LV_FLEX_FLOW_ROW_WRAP);
     int32_t v = 0;
     lv_obj_set_style_pad_row(cont, v, 0);
@@ -58,11 +63,10 @@ void screen_layout_init(void) {
     lv_obj_add_style(cont, &style_container, 0);
     lv_obj_set_scrollbar_mode(cont, LV_SCROLLBAR_MODE_OFF);
 
-    uint32_t i;
-    for (i = 0; i < 15; i++) {
+    for (uint32_t i = 0; i < NLABELS; i++) {
         if (i == 12) {
             lv_obj_t *obj = lv_obj_create(cont);
-            lv_obj_set_size(obj, 231, 10);
+            lv_obj_set_size(obj, 231, 5);
             lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
             lv_obj_add_style(obj, &style_screen, 0);
             lv_obj_set_style_border_opa(obj, 0, 0);
@@ -75,9 +79,11 @@ void screen_layout_init(void) {
 
         key_labels[i] = lv_label_create(obj);
         lv_obj_center(key_labels[i]);
-        lv_obj_set_style_text_font(key_labels[i], &ergohaven_symbols_20, LV_PART_MAIN);
+        lv_obj_set_style_text_font(key_labels[i], &ergohaven_symbols_28, LV_PART_MAIN);
         lv_obj_set_style_text_align(key_labels[i], LV_TEXT_ALIGN_CENTER, 0);
-        lv_label_set_text(key_labels[i], "");
+        lv_label_set_text_static(key_labels[i], "");
+        label_big[i] = true;
+        label_kc[i]  = 0;
 
         if (i >= 12) {
             lv_obj_set_style_border_opa(obj, 0, 0);
@@ -86,37 +92,87 @@ void screen_layout_init(void) {
     }
 }
 
-static uint8_t prev_layer         = 255;
-static int     update_label_index = 0;
+static uint8_t prev_layer = 255;
+static int     lbl_idx    = 0;
 
 void screen_layout_load(void) {
-    prev_layer         = 255;
-    update_label_index = 0;
+    prev_layer = 255;
+    lbl_idx    = 0;
     lv_scr_load(screen_layout);
 }
 
+size_t visible_len(const char *s) {
+    size_t len = 0;
+    while (*s != '\0') {
+        unsigned char p = (unsigned char)(*s);
+        if (p < 0x80) { // 1-byte ASCII
+            len += 1;
+            s++;
+        } else if (p < 0xE0) { // 2-byte
+            len += 1;
+            s += 2;
+        } else if (p < 0xF0) { // 3-byte
+            len += 2;
+            s += 3;
+        } else { // 4-byte (simplified, assumes valid input)
+            len += 2;
+            s += 4;
+        }
+    }
+    return len;
+}
+
 void screen_layout_housekeep(void) {
+    static uint32_t update_timer = 0;
+    if (timer_elapsed32(update_timer) < 5) // prevent long display updates
+        return;
+
     uint8_t layer = get_current_layer();
-    if (layer != prev_layer) {
+    if (layer != prev_layer || layer_name_updated) {
         prev_layer = layer;
         lv_label_set_text(label_layer_small, get_layer_label(layer));
-        update_label_index = 0;
+        update_timer       = timer_read32();
+        lbl_idx            = 0;
+        layer_name_updated = false;
         return;
     }
 
-    if (update_label_index >= 15) return;
+    if (lbl_idx >= NLABELS) {
+        lbl_idx = 0;
+    }
+
+    const uint8_t TABLE[NLABELS - 3][2] = {
+        {1, 0}, {1, 1}, {1, 2}, //
+        {2, 0}, {2, 1}, {2, 2}, //
+        {3, 0}, {3, 1}, {3, 2}, //
+        {4, 0}, {4, 1}, {4, 2}, //
+    };
 
     uint16_t keycode = KC_TRANSPARENT;
-    if (update_label_index < 12)
-        keycode = get_keycode(layer, update_label_index / 3 + 1, update_label_index % 3);
-    else if (update_label_index == 13)
+    if (lbl_idx < 12)
+        keycode = get_keycode(layer, TABLE[lbl_idx][0], TABLE[lbl_idx][1]);
+    else if (lbl_idx == 13)
         keycode = get_keycode(layer, 0, 2);
-    else if (update_label_index == 12)
+    else if (lbl_idx == 12)
         keycode = get_encoder_keycode(layer, 0, false);
-    else if (update_label_index == 14)
+    else if (lbl_idx == 14)
         keycode = get_encoder_keycode(layer, 0, true);
-    lv_label_set_text(key_labels[update_label_index], keycode_to_str(keycode));
-    update_label_index += 1;
+    if (keycode != label_kc[lbl_idx]) {
+        get_keycode_str(label_text[lbl_idx], keycode);
+        int len = visible_len(label_text[lbl_idx]);
+
+        if (len <= 4 && !label_big[lbl_idx]) {
+            label_big[lbl_idx] = true;
+            lv_obj_set_style_text_font(key_labels[lbl_idx], &ergohaven_symbols_28, LV_PART_MAIN);
+        } else if (len > 4 && label_big[lbl_idx]) {
+            label_big[lbl_idx] = false;
+            lv_obj_set_style_text_font(key_labels[lbl_idx], &ergohaven_symbols_20, LV_PART_MAIN);
+        }
+        lv_label_set_text_static(key_labels[lbl_idx], label_text[lbl_idx]);
+        label_kc[lbl_idx] = keycode;
+        update_timer      = timer_read32();
+    }
+    lbl_idx += 1;
 }
 
 const eh_screen_t eh_screen_layout = {
