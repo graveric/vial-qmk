@@ -285,404 +285,400 @@ bool special_keycode_str(char *buf, uint16_t keycode) {
     switch (keycode) {
         case KC_TILD:
             sprintf(buf, "~");
-            break;
+            return true;
         case KC_EXLM:
             sprintf(buf, "!");
-            break;
+            return true;
         case KC_AT:
             sprintf(buf, "@");
-            break;
+            return true;
         case KC_HASH:
             sprintf(buf, "#");
-            break;
+            return true;
         case KC_DLR:
             sprintf(buf, "$");
-            break;
+            return true;
         case KC_PERC:
             sprintf(buf, "%%");
-            break;
+            return true;
         case KC_CIRC:
             sprintf(buf, "^");
-            break;
+            return true;
         case KC_AMPR:
             sprintf(buf, "&");
-            break;
+            return true;
         case KC_ASTR:
             sprintf(buf, "*");
-            break;
+            return true;
         case KC_LPRN:
             sprintf(buf, "(");
-            break;
+            return true;
         case KC_RPRN:
             sprintf(buf, ")");
-            break;
+            return true;
         case KC_UNDS:
             sprintf(buf, "_");
-            break;
+            return true;
         case KC_PLUS:
             sprintf(buf, "+");
-            break;
+            return true;
         case KC_LCBR:
             sprintf(buf, "{");
-            break;
+            return true;
         case KC_RCBR:
             sprintf(buf, "}");
-            break;
+            return true;
         case KC_PIPE:
             sprintf(buf, "|");
-            break;
+            return true;
         case KC_COLN:
             sprintf(buf, ":");
-            break;
+            return true;
         case KC_DQUO:
             sprintf(buf, "\"");
-            break;
+            return true;
         case KC_LABK:
             sprintf(buf, "<");
-            break;
+            return true;
         case KC_RABK:
             sprintf(buf, ">");
-            break;
+            return true;
         case KC_QUES:
             sprintf(buf, "?");
-            break;
+            return true;
         case QK_BOOT:
             sprintf(buf, EH_SYMBOL_KEYBOARD "\nFlsh");
-            break;
+            return true;
         case QK_RBT:
             sprintf(buf, EH_SYMBOL_KEYBOARD "\nRbt");
-            break;
+            return true;
         case EE_CLR:
             sprintf(buf, EH_SYMBOL_KEYBOARD "\nClr");
-            break;
+            return true;
         case QK_LAYER_LOCK:
             sprintf(buf, EH_SYMBOL_LAYER "\nLock");
-            break;
+            return true;
         case QK_TRI_LAYER_LOWER:
             sprintf(buf, EH_SYMBOL_LAYER "Tr\nLow");
-            break;
+            return true;
         case QK_TRI_LAYER_UPPER:
             sprintf(buf, EH_SYMBOL_LAYER "Tr\nUp");
-            break;
+            return true;
         case QK_TO ... QK_TO_MAX:
             sprintf(buf, "TO\n" EH_SYMBOL_LAYER "%d", keycode - QK_TO);
-            break;
+            return true;
         case QK_MOMENTARY ... QK_MOMENTARY_MAX:
             sprintf(buf, EH_SYMBOL_LAYER "%d", keycode - QK_MOMENTARY);
-            break;
+            return true;
         case QK_PERSISTENT_DEF_LAYER ... QK_PERSISTENT_DEF_LAYER_MAX:
             sprintf(buf, "PDF\n" EH_SYMBOL_LAYER "%d", keycode - QK_PERSISTENT_DEF_LAYER);
-            break;
+            return true;
         case QK_DEF_LAYER ... QK_DEF_LAYER_MAX:
             sprintf(buf, "DF\n" EH_SYMBOL_LAYER "%d", keycode - QK_DEF_LAYER);
-            break;
+            return true;
         case QK_TOGGLE_LAYER ... QK_TOGGLE_LAYER_MAX:
             sprintf(buf, "TG\n" EH_SYMBOL_LAYER "%d", keycode - QK_TOGGLE_LAYER);
-            break;
+            return true;
         case QK_LAYER_TAP_TOGGLE ... QK_LAYER_TAP_TOGGLE_MAX:
             sprintf(buf, "TT\n" EH_SYMBOL_LAYER "%d", keycode - QK_LAYER_TAP_TOGGLE);
-            break;
+            return true;
         case QK_ONE_SHOT_LAYER ... QK_ONE_SHOT_LAYER_MAX:
             sprintf(buf, "OSL\n" EH_SYMBOL_LAYER "%d", keycode - QK_ONE_SHOT_LAYER);
-            break;
+            return true;
         case QK_LAYER_TAP ... QK_LAYER_TAP_MAX: {
             int layer = QK_LAYER_TAP_GET_LAYER(keycode);
             int kc    = QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
             sprintf(buf, EH_SYMBOL_LAYER "%d\n%s", layer, basic_keycode_to_str(kc));
-            break;
+            return true;
         }
 
         case BL_ON:
             sprintf(buf, EH_SYMBOL_BL EH_SYMBOL_ON);
-            break;
+            return true;
         case BL_OFF:
             sprintf(buf, EH_SYMBOL_BL EH_SYMBOL_OFF);
-            break;
+            return true;
         case BL_TOGG:
             sprintf(buf, EH_SYMBOL_BL);
-            break;
+            return true;
         case BL_STEP:
             sprintf(buf, EH_SYMBOL_BL EH_SYMBOL_ANGLES_RIGHT);
-            break;
+            return true;
         case BL_DOWN:
             sprintf(buf, EH_SYMBOL_BL EH_SYMBOL_DOWN);
-            break;
+            return true;
         case BL_UP:
             sprintf(buf, EH_SYMBOL_BL EH_SYMBOL_UP);
-            break;
+            return true;
         case BL_BRTG:
             sprintf(buf, EH_SYMBOL_BL "\nBrTg");
-            break;
+            return true;
 
         case RM_ON:
             sprintf(buf, EH_SYMBOL_RGB EH_SYMBOL_ON);
-            break;
+            return true;
         case RM_OFF:
             sprintf(buf, EH_SYMBOL_RGB EH_SYMBOL_OFF);
-            break;
+            return true;
         case RM_TOGG:
         case UG_TOGG:
             sprintf(buf, EH_SYMBOL_RGB);
-            break;
+            return true;
         case RM_NEXT:
         case UG_NEXT:
             sprintf(buf, EH_SYMBOL_RGB EH_SYMBOL_ANGLES_RIGHT);
-            break;
+            return true;
         case RM_PREV:
         case UG_PREV:
             sprintf(buf, EH_SYMBOL_RGB EH_SYMBOL_ANGLES_LEFT);
-            break;
+            return true;
         case RM_VALD:
         case UG_VALD:
             sprintf(buf, EH_SYMBOL_RGB "\nVal-");
-            break;
+            return true;
         case RM_VALU:
         case UG_VALU:
             sprintf(buf, EH_SYMBOL_RGB "\nVal+");
-            break;
+            return true;
         case RM_SPDU:
         case UG_SPDU:
             sprintf(buf, EH_SYMBOL_RGB "\nSpd-");
-            break;
+            return true;
         case RM_SPDD:
         case UG_SPDD:
             sprintf(buf, EH_SYMBOL_RGB "\nSpd+");
-            break;
+            return true;
         case RM_SATU:
         case UG_SATU:
             sprintf(buf, EH_SYMBOL_RGB "\nSat+");
-            break;
+            return true;
         case RM_SATD:
         case UG_SATD:
             sprintf(buf, EH_SYMBOL_RGB "\nSat-");
-            break;
+            return true;
         case RM_HUEU:
         case UG_HUEU:
             sprintf(buf, EH_SYMBOL_RGB "\nHue+");
-            break;
+            return true;
         case RM_HUED:
         case UG_HUED:
             sprintf(buf, EH_SYMBOL_RGB "\nHue-");
-            break;
-        case RGB_M_P...RGB_M_TW:
+            return true;
+        case RGB_M_P ... RGB_M_TW:
             sprintf(buf, "Undf");
-            break;
+            return true;
 
         case QK_MACRO ... QK_MACRO_MAX:
             sprintf(buf, "M%d", keycode - QK_MACRO);
-            break;
+            return true;
         case QK_TAP_DANCE ... QK_TAP_DANCE_MAX:
             sprintf(buf, "TD%d", keycode - QK_TAP_DANCE);
-            break;
+            return true;
 
         case C(KC_Z):
             sprintf(buf, EH_SYMBOL_ROTATE_LEFT "\n" EH_SYMBOL_CTL "Z");
-            break;
+            return true;
         case C(KC_X):
             sprintf(buf, EH_SYMBOL_CUT "\n" EH_SYMBOL_CTL "X");
-            break;
+            return true;
         case C(KC_C):
             sprintf(buf, EH_SYMBOL_COPY "\n" EH_SYMBOL_CTL "C");
-            break;
+            return true;
         case C(KC_V):
             sprintf(buf, EH_SYMBOL_PASTE "\n" EH_SYMBOL_CTL "V");
-            break;
+            return true;
 
         case EH_PRINFO:
             sprintf(buf, "Prnt\nInfo");
-            break;
+            return true;
         case WRD_PRV:
             sprintf(buf, "Word\n" EH_SYMBOL_ANGLES_LEFT);
-            break;
+            return true;
         case WRD_NXT:
             sprintf(buf, "Word\n" EH_SYMBOL_ANGLES_RIGHT);
-            break;
+            return true;
         case WPREV:
             sprintf(buf, "Win\n" EH_SYMBOL_ANGLES_LEFT);
-            break;
+            return true;
         case WNEXT:
             sprintf(buf, "Win\n" EH_SYMBOL_ANGLES_RIGHT);
-            break;
+            return true;
         case LAYER_NEXT:
             sprintf(buf, EH_SYMBOL_LAYER EH_SYMBOL_ANGLES_RIGHT);
-            break;
+            return true;
         case LAYER_PREV:
             sprintf(buf, EH_SYMBOL_LAYER EH_SYMBOL_ANGLES_LEFT);
-            break;
+            return true;
 
         case EH_LED_BL:
             sprintf(buf, "Led\nBlnk");
-            break;
+            return true;
         case EH_SNP:
             sprintf(buf, "Snpr\nMode");
-            break;
+            return true;
         case EH_SCR:
             sprintf(buf, "Scrl\nMode");
-            break;
+            return true;
         case EH_TXT:
             sprintf(buf, "Text\nMode");
-            break;
+            return true;
         case EH_USR1:
             sprintf(buf, "Mode\nUsr1");
-            break;
+            return true;
         case EH_USR2:
             sprintf(buf, "Mode\nUsr2");
-            break;
+            return true;
         case EH_USR3:
             sprintf(buf, "Mode\nUsr3");
-            break;
+            return true;
         case EH_RSRV1:
         case EH_RSRV2 ... EH_RSRV7:
             sprintf(buf, "Rsrv");
-            break;
+            return true;
 
         case LG_TOGGLE:
             sprintf(buf, "RuEn\nTg");
-            break;
+            return true;
         case LG_SYNC:
             sprintf(buf, "RuEn\nSync");
-            break;
+            return true;
         case LG_SET_EN:
             sprintf(buf, "RuEn\nEn");
-            break;
+            return true;
         case LG_SET_RU:
             sprintf(buf, "RuEn\nRu");
-            break;
+            return true;
         case LG_SET_M0:
             sprintf(buf, "RuEn\nM0");
-            break;
+            return true;
         case LG_SET_M1M2:
             sprintf(buf, "RuEn\nM1M2");
-            break;
+            return true;
         case LG_SET_DFLT:
             sprintf(buf, "RuEn\nDflt");
-            break;
+            return true;
         case LG_DOT:
             sprintf(buf, "RuEn\n.");
-            break;
+            return true;
         case LG_COMMA:
             sprintf(buf, "RuEn\n,");
-            break;
+            return true;
         case LG_SCLN:
             sprintf(buf, "RuEn\n;");
-            break;
+            return true;
         case LG_COLON:
             sprintf(buf, "RuEn\n:");
-            break;
+            return true;
         case LG_DQUO:
             sprintf(buf, "RuEn\n\"");
-            break;
+            return true;
         case LG_QUES:
             sprintf(buf, "RuEn\n?");
-            break;
+            return true;
         case LG_SLASH:
             sprintf(buf, "RuEn\n/");
-            break;
+            return true;
         case LG_LBR:
             sprintf(buf, "RuEn\n[");
-            break;
+            return true;
         case LG_RBR:
             sprintf(buf, "RuEn\n]");
-            break;
+            return true;
         case LG_LCBR:
             sprintf(buf, "RuEn\n{");
-            break;
+            return true;
         case LG_RCBR:
             sprintf(buf, "RuEn\n}");
-            break;
+            return true;
         case LG_LT:
             sprintf(buf, "RuEn\n<");
-            break;
+            return true;
         case LG_GT:
             sprintf(buf, "RuEn\n>");
-            break;
+            return true;
         case LG_GRAVE:
             sprintf(buf, "RuEn\n`");
-            break;
+            return true;
         case LG_TILD:
             sprintf(buf, "RuEn\n~");
-            break;
+            return true;
         case LG_AT:
             sprintf(buf, "RuEn\n@");
-            break;
+            return true;
         case LG_HASH:
             sprintf(buf, "RuEn\n#");
-            break;
+            return true;
         case LG_DLR:
             sprintf(buf, "RuEn\n$");
-            break;
+            return true;
         case LG_CIRC:
             sprintf(buf, "RuEn\n^");
-            break;
+            return true;
         case LG_AMPR:
             sprintf(buf, "RuEn\n&");
-            break;
+            return true;
         case LG_PIPE:
             sprintf(buf, "RuEn\n|");
-            break;
+            return true;
         case LG_QUOTE:
             sprintf(buf, "RuEn\n'");
-            break;
+            return true;
         case LG_NUM:
             sprintf(buf, "RuEn\n№");
-            break;
+            return true;
         case LG_WORD:
             sprintf(buf, "RuEn\nword");
-            break;
+            return true;
         case LG_MOD:
             sprintf(buf, "RuEn\nMod");
-            break;
+            return true;
         case LG_STORE:
             sprintf(buf, "RuEn\nStor");
-            break;
+            return true;
         case LG_REVERT:
             sprintf(buf, "RuEn\nRvrt");
-            break;
+            return true;
         case LG_PERC:
             sprintf(buf, "RuEn\n%%");
-            break;
+            return true;
         case LG_TG_MAC:
             sprintf(buf, "RuEn\nMac");
-            break;
+            return true;
         case LG_RU_BE:
             sprintf(buf, "RuEn\nБ");
-            break;
+            return true;
         case LG_RU_YU:
             sprintf(buf, "RuEn\nЮ");
-            break;
+            return true;
         case LG_RU_ZHE:
             sprintf(buf, "RuEn\nЖ");
-            break;
+            return true;
         case LG_RU_E:
             sprintf(buf, "RuEn\nЭ");
-            break;
+            return true;
         case LG_RU_KHA:
             sprintf(buf, "RuEn\nХ");
-            break;
+            return true;
         case LG_RU_HRD_SGN:
             sprintf(buf, "RuEn\nЪ");
-            break;
+            return true;
         case LG_RU_YO:
             sprintf(buf, "RuEn\nЁ");
-            break;
+            return true;
 
         default:
             return false;
     }
-    return true;
 }
 
-void get_keycode_str(char *str, uint16_t keycode) {
-    if (special_keycode_str(str, keycode)) return;
+bool mods_keycode_to_str(char *str, uint16_t keycode) {
+    uint8_t mods  = QK_MODS_GET_MODS(keycode);
+    bool    ctrl  = mods & MOD_MASK_CTRL;
+    bool    shift = mods & MOD_MASK_SHIFT;
+    bool    alt   = mods & MOD_MASK_ALT;
+    bool    gui   = mods & MOD_MASK_GUI;
 
-    uint8_t     mods              = QK_MODS_GET_MODS(keycode);
-    uint8_t     basic_keycode     = QK_MODS_GET_BASIC_KEYCODE(keycode);
-    const char *basic_keycode_str = basic_keycode_to_str(basic_keycode);
-    bool        ctrl              = mods & MOD_MASK_CTRL;
-    bool        shift             = mods & MOD_MASK_SHIFT;
-    bool        alt               = mods & MOD_MASK_ALT;
-    bool        gui               = mods & MOD_MASK_GUI;
-    char       *mod_str;
+    char *mod_str;
     if (ctrl && shift && alt && gui)
         mod_str = "󰘴󰘶󰘵\n ";
     else if (shift && alt && gui)
@@ -715,7 +711,69 @@ void get_keycode_str(char *str, uint16_t keycode) {
         mod_str = " ";
     else
         mod_str = "";
+
+    uint8_t     basic_keycode     = QK_MODS_GET_BASIC_KEYCODE(keycode);
+    const char *basic_keycode_str = basic_keycode_to_str(basic_keycode);
     sprintf(str, "%s%s", mod_str, basic_keycode_str);
+    return true;
+}
+
+bool modtap_keycode_to_str(char *str, uint16_t keycode) {
+    uint8_t mods  = QK_MOD_TAP_GET_MODS(keycode);
+    bool    ctrl  = mods & MOD_MASK_CTRL;
+    bool    shift = mods & MOD_MASK_SHIFT;
+    bool    alt   = mods & MOD_MASK_ALT;
+    bool    gui   = mods & MOD_MASK_GUI;
+
+    char *mod_str;
+    if (ctrl && shift && alt && gui)
+        mod_str = "󰘴󰘶󰘵\n ";
+    else if (shift && alt && gui)
+        mod_str = "󰘶󰘵\n ";
+    else if (ctrl && alt && gui)
+        mod_str = "󰘴󰘵\n ";
+    else if (ctrl && shift && gui)
+        mod_str = "󰘴󰘶\n ";
+    else if (ctrl && shift && alt)
+        mod_str = "󰘴󰘶\n󰘵 ";
+    else if (alt && gui)
+        mod_str = "󰘵\n";
+    else if (shift && gui)
+        mod_str = "󰘶\n";
+    else if (shift && alt)
+        mod_str = "󰘶󰘵\n";
+    else if (ctrl && gui)
+        mod_str = "󰘴\n";
+    else if (ctrl && shift)
+        mod_str = "󰘴󰘶\n";
+    else if (ctrl && alt)
+        mod_str = "󰘴󰘵\n";
+    else if (ctrl)
+        mod_str = "󰘴 ";
+    else if (shift)
+        mod_str = "󰘶 ";
+    else if (alt)
+        mod_str = "󰘵 ";
+    else if (gui)
+        mod_str = " ";
+    else
+        mod_str = "";
+
+    uint8_t     basic_keycode     = QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
+    const char *basic_keycode_str = basic_keycode_to_str(basic_keycode);
+    sprintf(str, "%s/%s", mod_str, basic_keycode_str);
+    return true;
+}
+
+void get_keycode_str(char *str, uint16_t keycode) {
+    if (special_keycode_str(str, keycode))
+        return;
+    else if (IS_QK_BASIC(keycode) || IS_QK_MODS(keycode))
+        mods_keycode_to_str(str, keycode);
+    else if (IS_QK_MOD_TAP(keycode))
+        modtap_keycode_to_str(str, keycode);
+    else
+        sprintf(str, "UNDEF");
 }
 
 const char *keycode_to_str(uint16_t keycode) {
