@@ -1,4 +1,5 @@
 #include "ergohaven.h"
+#include "ergohaven_settings.h"
 #include "info_config.h"
 #include "ergohaven_ruen.h"
 #include "hid.h"
