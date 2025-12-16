@@ -13,7 +13,6 @@ extern const eh_screen_t eh_screen_layout;
 
 static lv_obj_t *screen_splash2;
 
-LV_IMG_DECLARE(anim_on_00);
 LV_IMG_DECLARE(anim_on_01);
 LV_IMG_DECLARE(anim_on_02);
 LV_IMG_DECLARE(anim_on_03);
@@ -25,19 +24,8 @@ LV_IMG_DECLARE(anim_on_08);
 LV_IMG_DECLARE(anim_on_09);
 LV_IMG_DECLARE(anim_on_10);
 
-static const lv_img_dsc_t * anim_on[] = {
-    &anim_on_00,
-    &anim_on_01,
-    &anim_on_02,
-    &anim_on_03,
-    &anim_on_04,
-    &anim_on_05,
-    &anim_on_06,
-    &anim_on_07,
-    &anim_on_08,
-    &anim_on_09,
-    &anim_on_10,
-    &anim_on_10,
+static const lv_img_dsc_t *anim_on[] = {
+    &anim_on_01, &anim_on_02, &anim_on_03, &anim_on_04, &anim_on_05, &anim_on_06, &anim_on_07, &anim_on_08, &anim_on_09, &anim_on_10, &anim_on_10, &anim_on_10, &anim_on_10,
 };
 
 void splash2_screen_init(void) {
@@ -45,10 +33,13 @@ void splash2_screen_init(void) {
     lv_obj_add_style(screen_splash2, &style_screen, 0);
     use_flex_column(screen_splash2);
 
-    lv_obj_t * anim = lv_animimg_create(screen_splash2);
+    lv_obj_t *anim = lv_animimg_create(screen_splash2);
 
-    lv_animimg_set_src(anim, (lv_img_dsc_t**)anim_on, sizeof(anim_on)/sizeof(anim_on[0]));
-    lv_animimg_set_duration(anim, 1500);
+    lv_animimg_set_src(anim, (lv_img_dsc_t **)anim_on, sizeof(anim_on) / sizeof(anim_on[0]));
+    // lv_animimg_t *animimg = (lv_animimg_t *)anim;
+    // lv_anim_set_time(&animimg->anim, EH_DISPLAY_TIMEOUT_SPLASH_SCREEN);
+    // lv_anim_set_playback_delay(&animimg->anim, EH_DISPLAY_TIMEOUT_SPLASH_SCREEN + 1000);
+    lv_animimg_set_duration(anim, EH_DISPLAY_TIMEOUT_SPLASH_SCREEN + 500);
     lv_animimg_set_repeat_count(anim, 1);
 
     lv_obj_align(anim, LV_ALIGN_CENTER, 0, 0);
@@ -61,9 +52,7 @@ void splash2_screen_load(void) {
     lv_scr_load(screen_splash2);
 }
 
-void splash2_screen_housekeep(void) {
-    lv_scr_load(screen_splash2);
-}
+void splash2_screen_housekeep(void) {}
 
 const eh_screen_t eh_screen_splash2 = {
     .init      = splash2_screen_init,
@@ -71,11 +60,48 @@ const eh_screen_t eh_screen_splash2 = {
     .housekeep = splash2_screen_housekeep,
 };
 
+/* Screen idle */
+
+static lv_obj_t *screen_idle;
+lv_obj_t        *anim_idle;
+
+static const lv_img_dsc_t *anim_idle_array[] = {&anim_on_10, &anim_on_09};
+
+void idle_screen_init(void) {
+    screen_idle = lv_obj_create(NULL);
+    lv_obj_add_style(screen_idle, &style_screen, 0);
+    use_flex_column(screen_idle);
+
+    anim_idle = lv_animimg_create(screen_idle);
+
+    lv_animimg_set_src(anim_idle, (lv_img_dsc_t **)anim_idle_array, sizeof(anim_idle_array) / sizeof(anim_idle_array[0]));
+    lv_animimg_set_duration(anim_idle, 2000);
+    lv_animimg_set_repeat_count(anim_idle, LV_ANIM_REPEAT_INFINITE);
+
+    lv_obj_align(anim_idle, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_style_pad_top(anim_idle, 0, 0);
+    lv_obj_set_style_pad_bottom(anim_idle, 0, 0);
+}
+
+void idle_screen_load(void) {
+    lv_scr_load(screen_idle);
+    lv_animimg_start(anim_idle);
+}
+
+void idle_screen_housekeep(void) {}
+
+const eh_screen_t eh_screen_idle = {
+    .init      = idle_screen_init,
+    .load      = idle_screen_load,
+    .housekeep = idle_screen_housekeep,
+};
+
 static uint32_t screen_timer = 0;
 
 typedef enum {
     SCREEN_OFF = -1,
     SCREEN_SPLASH,
+    SCREEN_IDLE,
     SCREEN_LAYOUT,
     SCREEN_VOLUME,
     SCREEN_HOME,
@@ -88,6 +114,7 @@ eh_screen_t current_screen;
 
 void display_init_screens_kb(void) {
     eh_screen_splash2.init();
+    eh_screen_idle.init();
     eh_screen_layout.init();
     eh_screen_home.init();
     eh_screen_volume.init();
@@ -132,7 +159,15 @@ void display_housekeeping_task(void) {
         switch (screen_state) {
             case SCREEN_SPLASH:
                 if (screen_elapsed > EH_DISPLAY_TIMEOUT_SPLASH_SCREEN) {
+                    change_screen_state = SCREEN_IDLE;
+                }
+                break;
+
+            case SCREEN_IDLE:
+                if (activity_elapsed < 100) {
                     change_screen_state = SCREEN_LAYOUT;
+                } else if (activity_elapsed > EH_TIMEOUT) {
+                    change_screen_state = SCREEN_OFF;
                 }
                 break;
 
@@ -141,6 +176,8 @@ void display_housekeeping_task(void) {
                     change_screen_state = SCREEN_HOME;
                 } else if (activity_elapsed > EH_TIMEOUT) {
                     change_screen_state = SCREEN_OFF;
+                } else if (activity_elapsed > 10000) {
+                    change_screen_state = SCREEN_IDLE;
                 }
                 break;
 
@@ -172,6 +209,10 @@ void display_housekeeping_task(void) {
         switch (screen_state) {
             case SCREEN_SPLASH:
                 current_screen = eh_screen_splash2;
+                display_turn_on();
+                break;
+            case SCREEN_IDLE:
+                current_screen = eh_screen_idle;
                 display_turn_on();
                 break;
             case SCREEN_HOME:
