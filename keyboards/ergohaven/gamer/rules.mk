@@ -66,6 +66,7 @@ SRC += anim/anim_14.c
 SRC += anim/anim_15.c
 SRC += anim/anim_16.c
 SRC += anim/anim_17.c
+SRC += anim/anim_18.c
 SRC += display_modes.c
 SRC += screen_layout.c
 SRC += keyboards/ergohaven/ergohaven_keycode_str.c

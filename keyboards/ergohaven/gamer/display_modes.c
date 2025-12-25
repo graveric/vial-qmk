@@ -30,10 +30,11 @@ LV_IMG_DECLARE(anim_14);
 LV_IMG_DECLARE(anim_15);
 LV_IMG_DECLARE(anim_16);
 LV_IMG_DECLARE(anim_17);
+LV_IMG_DECLARE(anim_18);
 
 static const lv_img_dsc_t *anim_on[] = {
     &anim_01, &anim_02, &anim_03, &anim_04, &anim_05, &anim_06, &anim_07, &anim_08, &anim_09, &anim_10, //
-    &anim_11, &anim_12, &anim_13, &anim_14, &anim_15, &anim_16, &anim_17,
+    &anim_11, &anim_12, &anim_13, &anim_14, &anim_15, &anim_16, &anim_17, &anim_18                      //
 };
 
 static lv_obj_t *anim_start;
@@ -60,8 +61,8 @@ void splash2_screen_load(void) {
 }
 
 void splash2_screen_housekeep(void) {
-    bool loop = anim_index >= 11;
-    int32_t delay = loop ? 500 : 100;
+    bool    loop  = anim_index >= 11;
+    int32_t delay = loop ? 200 : 100;
 
     if (timer_elapsed32(anim_timer) > delay) {
         dprintf("set src %ld\n", anim_index);
@@ -70,7 +71,7 @@ void splash2_screen_housekeep(void) {
         if (!loop)
             anim_index += 1;
         else
-            anim_index = (anim_index - 11 + 1) % 6 + 11;
+            anim_index = (anim_index - 11 + 1) % 7 + 11;
         anim_timer = timer_read32();
     }
 }
