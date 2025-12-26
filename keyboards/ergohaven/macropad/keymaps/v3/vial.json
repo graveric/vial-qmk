@@ -13,6 +13,9 @@
             ["0,0\n\n\n\n\n\n\n\n\ne",{"x": 0.25},"4,0","4,1","4,2"]
         ]
     },
+    "vial": {
+        "midi": "advanced"
+    },
     "settings": [
         {
             "name": "Layer labels",
