@@ -13,6 +13,7 @@ extern const eh_screen_t eh_screen_layout;
 
 static lv_obj_t *screen_splash2;
 
+LV_IMG_DECLARE(anim_00);
 LV_IMG_DECLARE(anim_01);
 LV_IMG_DECLARE(anim_02);
 LV_IMG_DECLARE(anim_03);
@@ -26,20 +27,20 @@ LV_IMG_DECLARE(anim_10);
 LV_IMG_DECLARE(anim_11);
 LV_IMG_DECLARE(anim_12);
 LV_IMG_DECLARE(anim_13);
-LV_IMG_DECLARE(anim_14);
-LV_IMG_DECLARE(anim_15);
-LV_IMG_DECLARE(anim_16);
-LV_IMG_DECLARE(anim_17);
-LV_IMG_DECLARE(anim_18);
 
 static const lv_img_dsc_t *anim_on[] = {
-    &anim_01, &anim_02, &anim_03, &anim_04, &anim_05, &anim_06, &anim_07, &anim_08, &anim_09, &anim_10, //
-    &anim_11, &anim_12, &anim_13, &anim_14, &anim_15, &anim_16, &anim_17, &anim_18                      //
+    &anim_00, &anim_01, &anim_02, &anim_03, &anim_04, &anim_05, &anim_06, &anim_07, &anim_08, &anim_09, //
+    &anim_10, &anim_11, &anim_12, &anim_13,                                                             //
 };
 
 static lv_obj_t *anim_start;
 static uint32_t  anim_timer = 0;
 static int32_t   anim_index = 0;
+
+const int    IMG_WIDTH  = 240;
+const int    IMG_HEIGHT = 224;
+lv_img_dsc_t custom_img_dsc;
+uint16_t    *image_data_buffer;
 
 void splash2_screen_init(void) {
     screen_splash2 = lv_obj_create(NULL);
@@ -47,32 +48,141 @@ void splash2_screen_init(void) {
     use_flex_column(screen_splash2);
 
     anim_start = lv_img_create(screen_splash2);
-    lv_img_set_src(anim_start, anim_on[0]);
-
     lv_obj_align(anim_start, LV_ALIGN_CENTER, 0, 0);
     lv_obj_set_style_pad_top(anim_start, 0, 0);
     lv_obj_set_style_pad_bottom(anim_start, 0, 0);
+
+    const int data_size = IMG_WIDTH * IMG_HEIGHT * 2;
+    image_data_buffer   = (uint16_t *)lv_mem_alloc(data_size);
+    memset(image_data_buffer, 0, data_size);
+    custom_img_dsc.header.always_zero = 0;
+    custom_img_dsc.header.w           = IMG_WIDTH;
+    custom_img_dsc.header.h           = IMG_HEIGHT;
+    custom_img_dsc.data_size          = data_size;
+    custom_img_dsc.header.cf          = LV_IMG_CF_TRUE_COLOR; /*Set the color format*/
+    custom_img_dsc.data               = (uint8_t *)image_data_buffer;
 }
 
 void splash2_screen_load(void) {
     lv_scr_load(screen_splash2);
     anim_timer = 0;
     anim_index = 0;
+    srand(timer_read32());
+}
+
+void draw_stars(lv_img_dsc_t *out, bool first) {
+    static bool stars_init = false;
+    static int  stars[20][3];
+    if (!stars_init) {
+        for (int i = 0; i < ARRAY_SIZE(stars); ++i) {
+            stars[i][0] = rand() % IMG_WIDTH;
+            stars[i][1] = rand() % IMG_HEIGHT;
+            stars[i][2] = rand() % 8 + 3;
+        }
+        stars_init = true;
+    }
+    uint16_t colors[] = {
+        lv_color_make(255, 255, 255).full, //
+        lv_color_make(255, 146, 35).full,  //
+        lv_color_make(255, 241, 235).full, //
+        lv_color_make(233, 236, 255).full, //
+        lv_color_make(191, 211, 255).full, //
+        lv_color_make(254, 249, 255).full, //
+        lv_color_make(255, 120, 0).full,   //
+        lv_color_make(186, 207, 255).full, //
+    };
+    if (first) memset((uint8_t *)out->data, 0, out->data_size);
+    uint16_t *out_data = (uint16_t *)(out->data);
+    for (int i = 0; i < ARRAY_SIZE(stars); ++i) {
+        int x = stars[i][0];
+        int y = stars[i][1];
+        int d = stars[i][2];
+        if (first && d >= 10) continue;
+        if (!first && d < 10) continue;
+
+        uint16_t color = colors[i % ARRAY_SIZE(colors)];
+
+        if (d >= 10 && x > 1 && x < IMG_WIDTH - 3 && y > 1 && y < IMG_HEIGHT - 3) {
+            out_data[(y - 2) * IMG_WIDTH + x]     = color;
+            out_data[(y - 1) * IMG_WIDTH + x - 1] = color;
+            out_data[(y - 1) * IMG_WIDTH + x]     = color;
+            out_data[(y - 1) * IMG_WIDTH + x + 1] = color;
+            out_data[y * IMG_WIDTH + x - 2]       = color;
+            out_data[y * IMG_WIDTH + x - 1]       = color;
+            out_data[y * IMG_WIDTH + x]           = color;
+            out_data[y * IMG_WIDTH + x + 1]       = color;
+            out_data[y * IMG_WIDTH + x + 2]       = color;
+            out_data[(y + 1) * IMG_WIDTH + x - 1] = color;
+            out_data[(y + 1) * IMG_WIDTH + x]     = color;
+            out_data[(y + 1) * IMG_WIDTH + x + 1] = color;
+            out_data[(y + 2) * IMG_WIDTH + x]     = color;
+        } else if (d >= 7 && x > 0 && x < IMG_WIDTH - 2 && y > 0 && y < IMG_HEIGHT - 2) {
+            out_data[(y - 1) * IMG_WIDTH + x] = color;
+            out_data[y * IMG_WIDTH + x - 1]   = color;
+            out_data[y * IMG_WIDTH + x]       = color;
+            out_data[y * IMG_WIDTH + x + 1]   = color;
+            out_data[(y + 1) * IMG_WIDTH + x] = color;
+        } else
+            out_data[y * IMG_WIDTH + x] = color;
+
+        x -= d;
+        if (x < 0) {
+            stars[i][0] = IMG_WIDTH - 1;
+            stars[i][1] = rand() % IMG_HEIGHT;
+            stars[i][2] = rand() % 8 + 3;
+        } else
+            stars[i][0] = x;
+    }
+}
+
+void load_rle(const lv_img_dsc_t *in, lv_img_dsc_t *out) {
+    lv_color16_t col[8];
+    for (int i = 0; i < 8; ++i) {
+        uint8_t red       = in->data[i * 3 + 0];
+        uint8_t green     = in->data[i * 3 + 1];
+        uint8_t blue      = in->data[i * 3 + 2];
+        col[i].ch.red     = red >> 3;
+        col[i].ch.blue    = blue >> 3;
+        col[i].ch.green_h = green >> 5;
+        col[i].ch.green_l = green & 0b111;
+    }
+
+    uint16_t *out_data = (uint16_t *)(out->data);
+    int       j        = 0;
+    int       maxj     = out->data_size / 2;
+    for (int i = 24; i < in->data_size; ++i) {
+        uint8_t d   = in->data[i];
+        uint8_t idx = d & 0b111;
+        uint8_t run = d >> 3;
+        if (idx == 0)
+            j += run;
+        else
+            for (; run > 0 && j < maxj; --run, ++j)
+                out_data[j] = col[idx].full;
+    }
 }
 
 void splash2_screen_housekeep(void) {
-    bool    loop  = anim_index >= 11;
-    int32_t delay = loop ? 200 : 100;
+    if (timer_elapsed32(anim_timer) > 100) {
+        const static int TABLE[] = {
+            9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  //
+            9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  //
+            10, 11, 12,                             //
+            13, 13, 13, 13, 13, 13, 13, 13, 13, 13, //
+            13, 13, 13, 13, 13, 13, 13, 13, 13, 13, //
+            12, 11, 10,                             //
+        };
 
-    if (timer_elapsed32(anim_timer) > delay) {
-        dprintf("set src %ld\n", anim_index);
-        lv_img_set_src(anim_start, anim_on[anim_index]);
+        int frame_idx = anim_index;
+        if (anim_index >= 9) frame_idx = TABLE[(anim_index - 9) % ARRAY_SIZE(TABLE)];
 
-        if (!loop)
-            anim_index += 1;
-        else
-            anim_index = (anim_index - 11 + 1) % 7 + 11;
+        dprintf("anim %ld frame %d\n", anim_index, frame_idx);
+        draw_stars(&custom_img_dsc, true);
+        load_rle(anim_on[frame_idx], &custom_img_dsc);
+        draw_stars(&custom_img_dsc, false);
+        lv_img_set_src(anim_start, &custom_img_dsc);
         anim_timer = timer_read32();
+        anim_index += 1;
     }
 }
 
