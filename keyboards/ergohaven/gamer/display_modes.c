@@ -173,12 +173,12 @@ void splash2_screen_housekeep(void) {
             12, 11, 10,                             //
         };
 
-        int frame_idx = anim_index;
-        if (anim_index >= 9) frame_idx = TABLE[(anim_index - 9) % ARRAY_SIZE(TABLE)];
-
+        int frame_idx = -1;
+        if (anim_index > 5) frame_idx = anim_index - 5;
+        if (anim_index >= 14) frame_idx = TABLE[(anim_index - 14) % ARRAY_SIZE(TABLE)];
         dprintf("anim %ld frame %d\n", anim_index, frame_idx);
         draw_stars(&custom_img_dsc, true);
-        load_rle(anim_on[frame_idx], &custom_img_dsc);
+        if (frame_idx >= 0) load_rle(anim_on[frame_idx], &custom_img_dsc);
         draw_stars(&custom_img_dsc, false);
         lv_img_set_src(anim_start, &custom_img_dsc);
         anim_timer = timer_read32();
