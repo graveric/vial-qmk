@@ -82,44 +82,6 @@ const eh_screen_t eh_screen_splash2 = {
     .housekeep = splash2_screen_housekeep,
 };
 
-/* Screen idle */
-
-static lv_obj_t *screen_idle;
-lv_obj_t        *anim_idle;
-
-static const lv_img_dsc_t *anim_idle_array[] = {
-    &anim_13, &anim_14, &anim_15, &anim_16, &anim_17, &anim_12,
-};
-
-void idle_screen_init(void) {
-    screen_idle = lv_obj_create(NULL);
-    lv_obj_add_style(screen_idle, &style_screen, 0);
-    use_flex_column(screen_idle);
-
-    anim_idle = lv_animimg_create(screen_idle);
-
-    lv_animimg_set_src(anim_idle, (lv_img_dsc_t **)anim_idle_array, sizeof(anim_idle_array) / sizeof(anim_idle_array[0]));
-    lv_animimg_set_duration(anim_idle, 2000);
-    lv_animimg_set_repeat_count(anim_idle, LV_ANIM_REPEAT_INFINITE);
-
-    lv_obj_align(anim_idle, LV_ALIGN_CENTER, 0, 0);
-    lv_obj_set_style_pad_top(anim_idle, 0, 0);
-    lv_obj_set_style_pad_bottom(anim_idle, 0, 0);
-}
-
-void idle_screen_load(void) {
-    lv_scr_load(screen_idle);
-    lv_animimg_start(anim_idle);
-}
-
-void idle_screen_housekeep(void) {}
-
-const eh_screen_t eh_screen_idle = {
-    .init      = idle_screen_init,
-    .load      = idle_screen_load,
-    .housekeep = idle_screen_housekeep,
-};
-
 static uint32_t screen_timer = 0;
 
 typedef enum {
@@ -137,7 +99,6 @@ eh_screen_t current_screen;
 
 void display_init_screens_kb(void) {
     eh_screen_splash2.init();
-    eh_screen_idle.init();
     eh_screen_layout.init();
     eh_screen_home.init();
     eh_screen_volume.init();
