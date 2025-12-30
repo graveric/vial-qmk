@@ -9,7 +9,7 @@ WIDTH = 240
 HEIGHT = 224
 MAX_RUN = (1 << (8 - NBITS)) - 1
 print(MAX_RUN)
-NIMGS = 14
+NIMGS = 16
 
 
 def to_rle(img):
@@ -91,25 +91,26 @@ for i in range(0, NIMGS):
     rle = to_rle(img)
     print(len(rle))
     rle_str = ', '.join(map(str, rle))
+    name = f'anim_{i:02d}'
     template = f'''
-#ifndef LV_ATTRIBUTE_IMG_ANIM_{i:02d}
-#define LV_ATTRIBUTE_IMG_ANIM_{i:02d}
+#ifndef LV_ATTRIBUTE_IMG_{name.upper()}
+#define LV_ATTRIBUTE_IMG_{name.upper()}
 #endif
 
-const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_ANIM_{i:02d} uint8_t anim_{i:02d}_map[] = {{
+const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_{name.upper()} uint8_t {name}_map[] = {{
 {palette_str}
 {roi_x0}, {roi_y0}, {img.shape[1]}, {img.shape[0]}, // x0 y0 w h
 {rle_str}
 }};
 
-const lv_img_dsc_t anim_{i:02d} = {{
+const lv_img_dsc_t {name} = {{
   .header.cf = LV_IMG_CF_USER_ENCODED_0,
   .header.always_zero = 0,
   .header.reserved = 0,
   .header.w = {WIDTH},
   .header.h = {HEIGHT},
   .data_size = {len(rle) + NCOLORS*3},
-  .data = anim_{i:02d}_map,
+  .data = {name}_map,
 }};
     '''
 
@@ -117,5 +118,5 @@ const lv_img_dsc_t anim_{i:02d} = {{
 
     img = palette[img]
     cv.imshow('img', img)
-    if cv.waitKey(0) in [27, ord('q')]:
+    if cv.waitKey(1) in [27, ord('q')]:
         break

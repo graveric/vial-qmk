@@ -27,10 +27,12 @@ LV_IMG_DECLARE(anim_10);
 LV_IMG_DECLARE(anim_11);
 LV_IMG_DECLARE(anim_12);
 LV_IMG_DECLARE(anim_13);
+LV_IMG_DECLARE(anim_14);
+LV_IMG_DECLARE(anim_15);
 
 static const lv_img_dsc_t *anim_on[] = {
     &anim_00, &anim_01, &anim_02, &anim_03, &anim_04, &anim_05, &anim_06, &anim_07, &anim_08, &anim_09, //
-    &anim_10, &anim_11, &anim_12, &anim_13,                                                             //
+    &anim_10, &anim_11, &anim_12, &anim_13, &anim_14, &anim_15,                                         //
 };
 
 static lv_obj_t *anim_start;
@@ -154,6 +156,7 @@ void load_rle(const lv_img_dsc_t *in, lv_img_dsc_t *out) {
     int w  = in->data[NCOLORS * 3 + 2];
     // int h  = in->data[NCOLORS * 3 + 3];
     int u = 0;
+
     uint16_t *out_data = (uint16_t *)(out->data) + y0 * out->header.w + x0;
 
     for (int i = NCOLORS * 3 + 4; i < in->data_size; ++i) {
@@ -178,15 +181,15 @@ void load_rle(const lv_img_dsc_t *in, lv_img_dsc_t *out) {
 void splash2_screen_housekeep(void) {
     if (timer_elapsed32(anim_timer) > 50) {
         const static int TABLE[] = {
-            9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  //
-            9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  //
-            9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  //
-            9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  //
+            9,  15, 9,  15, 9,  15, 9,  15, 9,  15, //
+            9,  15, 9,  15, 9,  15, 9,  15, 9,  15, //
+            9,  15, 9,  15, 9,  15, 9,  15, 9,  15, //
+            9,  15, 9,  15, 9,  15, 9,  15, 9,  15, //
             10, 11, 12,                             //
-            13, 13, 13, 13, 13, 13, 13, 13, 13, 13, //
-            13, 13, 13, 13, 13, 13, 13, 13, 13, 13, //
-            13, 13, 13, 13, 13, 13, 13, 13, 13, 13, //
-            13, 13, 13, 13, 13, 13, 13, 13, 13, 13, //
+            13, 14, 13, 14, 13, 14, 13, 14, 13, 14, //
+            13, 14, 13, 14, 13, 14, 13, 14, 13, 14, //
+            13, 14, 13, 14, 13, 14, 13, 14, 13, 14, //
+            13, 14, 13, 14, 13, 14, 13, 14, 13, 14, //
             12, 11, 10,                             //
         };
 
