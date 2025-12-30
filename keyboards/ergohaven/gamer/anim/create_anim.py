@@ -3,12 +3,13 @@ import numpy as np
 from PIL import Image
 from itertools import groupby
 
-NBITS = 3
+NBITS = 4
 NCOLORS = 1 << NBITS
 WIDTH = 240
 HEIGHT = 224
 MAX_RUN = (1 << (8 - NBITS)) - 1
 print(MAX_RUN)
+NIMGS = 14
 
 
 def to_rle(img):
@@ -22,42 +23,51 @@ def to_rle(img):
     return encoded_data
 
 
-all_imgs = []
-for i in range(0, 17):
-    img = cv.imread(f'../res/{i:02d}.png', cv.IMREAD_UNCHANGED)
-    mask = img[..., 3] > 1
-    for c in range(3):
-        img[..., c] = img[..., c] * (img[..., 3] / 255)
-    img[~mask] = (255, 0, 0, 0)
-    img = img[..., :3]
-    img = img[..., ::-1]
+for i in range(0, NIMGS):
+    if True:
+        img = cv.imread(f'../res/{i:02d}.png', cv.IMREAD_UNCHANGED)
+        mask = img[..., 3] > 1
+        for c in range(3):
+            img[..., c] = img[..., c] * (img[..., 3] / 255)
+        img[~mask] = (255, 0, 0, 0)
+        img = img[..., :3]
+        img = img[..., ::-1]
+        pilimg = Image.fromarray(img)
+    else:
+        pilimg = Image.open(f'../res/{i:02d}.png')
+    print(pilimg.getpalette())
+    print('pillow mode', pilimg.mode)
+    pilimg = pilimg.quantize(colors=NCOLORS, method=Image.Quantize.FASTOCTREE)
+    print(pilimg.getpalette())
 
-    all_imgs.append(img)
+    # put background as first color
+    colors = pilimg.getcolors()
+    new_colors = sorted(colors, key=lambda x: x[0], reverse=True)
+    pilimg = pilimg.remap_palette([x[1] for x in new_colors])
+    # pilimg.show()
 
-# combine all image to create common palette
-all_imgs = np.hstack(all_imgs)
-pilimg = Image.fromarray(all_imgs)
-pilimg = pilimg.quantize(colors=NCOLORS)
+    palette = np.array(pilimg.getpalette(), dtype=np.uint8).reshape(-1, 3)[:NCOLORS, ::-1]
+    palette_str = []
+    for j, (b, g, r) in enumerate(palette):
+        palette_str.append(f'{r}, {g}, {b}, // color {j}')
+    palette_str = '\n'.join(palette_str)
 
-# put background as first color
-colors = pilimg.getcolors()
-new_colors = sorted(colors, key=lambda x: x[0], reverse=True)
-pilimg = pilimg.remap_palette([x[1] for x in new_colors])
-# pilimg.show()
+    img = np.array(pilimg)
+    roi_x0, roi_y0 = 0, 0
+    roi_x1, roi_y1 = WIDTH - 1, HEIGHT - 1
+    while np.count_nonzero(img[:, roi_x0]) == 0:
+        roi_x0 += 1
+    while np.count_nonzero(img[:, roi_x1]) == 0:
+        roi_x1 -= 1
+    while np.count_nonzero(img[roi_y0, :]) == 0:
+        roi_y0 += 1
+    while np.count_nonzero(img[roi_y1, :]) == 0:
+        roi_y1 -= 1
 
-palette = np.array(pilimg.getpalette(), dtype=np.uint8).reshape(-1, 3)[:NCOLORS, ::-1]
-palette_str = []
-for i, (b, g, r) in enumerate(palette):
-    palette_str.append(f'{r}, {g}, {b}, // color {i}')
-palette_str = '\n'.join(palette_str)
-
-for i in range(0, 17):
-    img = np.array(pilimg)[:, WIDTH * i:WIDTH * (i + 1)]
+    img = img[roi_y0:roi_y1 + 1, roi_x0:roi_x1 + 1]
     rle = to_rle(img)
     print(len(rle))
     rle_str = ', '.join(map(str, rle))
-    # print(rle)
-    img = palette[img]
     template = f'''
 #ifdef __has_include
     #if __has_include("lvgl.h")
@@ -84,6 +94,7 @@ for i in range(0, 17):
 
 const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_ANIM_{i:02d} uint8_t anim_{i:02d}_map[] = {{
 {palette_str}
+{roi_x0}, {roi_y0}, {img.shape[1]}, {img.shape[0]}, // x0 y0 w h
 {rle_str}
 }};
 
@@ -96,27 +107,12 @@ const lv_img_dsc_t anim_{i:02d} = {{
   .data_size = {len(rle) + NCOLORS*3},
   .data = anim_{i:02d}_map,
 }};
-
     '''
-    # print(template)
+
+    f = open(f'anim_{i:02d}.c', 'w')
+    print(template, file=f)
+
+    img = palette[img]
     cv.imshow('img', img)
-    if cv.waitKey(1) in [27, ord('q')]:
+    if cv.waitKey(0) in [27, ord('q')]:
         break
-
-    with open(f'anim_{i:02d}.c', 'w') as f:
-        print(template, file=f)
-
-    # print(np.unique(img))
-    # img = np.asarray(pilimg)
-    # cv.imshow('img', img)
-    # if cv.waitKey() == 27:
-    #     break
-
-# all_imgs = reduce_palette_kmeans(all_imgs, 16)
-# cv.imshow('all_imgs', all_imgs)
-# cv.waitKey()
-
-# print(np.unique(img))
-# print(np.unique(img))
-
-# cv.imshow('img', img)

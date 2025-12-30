@@ -138,30 +138,40 @@ void draw_stars(lv_img_dsc_t *out) {
     }
 }
 
+const int NCOLORS = 16;
+
 void load_rle(const lv_img_dsc_t *in, lv_img_dsc_t *out) {
-    lv_color16_t col[8];
-    for (int i = 0; i < 8; ++i) {
-        uint8_t red       = in->data[i * 3 + 0];
-        uint8_t green     = in->data[i * 3 + 1];
-        uint8_t blue      = in->data[i * 3 + 2];
-        col[i].ch.red     = red >> 3;
-        col[i].ch.blue    = blue >> 3;
-        col[i].ch.green_h = green >> 5;
-        col[i].ch.green_l = green & 0b111;
+    uint16_t col[NCOLORS];
+    for (int i = 0; i < NCOLORS; ++i) {
+        uint8_t red   = in->data[i * 3 + 0];
+        uint8_t green = in->data[i * 3 + 1];
+        uint8_t blue  = in->data[i * 3 + 2];
+        col[i]        = lv_color_make(red, green, blue).full;
     }
 
-    uint16_t *out_data = (uint16_t *)(out->data);
-    int       j        = 0;
-    int       maxj     = out->data_size / 2;
-    for (int i = 24; i < in->data_size; ++i) {
+    int x0 = in->data[NCOLORS * 3 + 0];
+    int y0 = in->data[NCOLORS * 3 + 1];
+    int w  = in->data[NCOLORS * 3 + 2];
+    // int h  = in->data[NCOLORS * 3 + 3];
+    int u = 0;
+    uint16_t *out_data = (uint16_t *)(out->data) + y0 * out->header.w + x0;
+
+    for (int i = NCOLORS * 3 + 4; i < in->data_size; ++i) {
         uint8_t d   = in->data[i];
-        uint8_t idx = d & 0b111;
-        uint8_t run = d >> 3;
-        if (idx == 0)
-            j += run;
-        else
-            for (; run > 0 && j < maxj; --run, ++j)
-                out_data[j] = col[idx].full;
+        uint8_t idx = d & 0b1111;
+        uint8_t run = d >> 4;
+        if (idx == 0) {
+            u += run;
+            out_data += out->header.w * (u / w);
+            u %= w;
+        } else
+            for (; run > 0; --run, ++u) {
+                if (u > w) {
+                    u = 0;
+                    out_data += out->header.w;
+                }
+                out_data[u] = col[idx];
+            }
     }
 }
 

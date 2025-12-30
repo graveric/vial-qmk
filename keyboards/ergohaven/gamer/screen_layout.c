@@ -45,7 +45,7 @@ void screen_layout_init(void) {
     lv_obj_set_scrollbar_mode(screen_layout, LV_SCROLLBAR_MODE_OFF);
 
     lv_obj_t *cont = lv_obj_create(screen_layout);
-    lv_obj_set_style_pad_top(screen_layout, 15, 0);
+    lv_obj_set_style_pad_top(screen_layout, 30, 0);
     lv_obj_set_style_pad_bottom(screen_layout, 10, 0);
     lv_obj_set_style_pad_right(screen_layout, 5, 0);
 
@@ -86,7 +86,7 @@ void screen_layout_init(void) {
 
     label_layer_small = lv_label_create(screen_layout);
     lv_label_set_text(label_layer_small, "");
-    lv_obj_set_style_pad_top(label_layer_small, 0, 0);
+    lv_obj_set_style_pad_top(label_layer_small, 10, 0);
     lv_obj_set_style_pad_bottom(label_layer_small, 0, 0);
     // lv_obj_set_style_text_color(label_layer_small, accent_color_blue, 0);
     lv_obj_set_style_text_font(label_layer_small, &ergohaven_symbols_28, LV_PART_MAIN);
