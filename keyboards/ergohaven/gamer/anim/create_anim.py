@@ -23,6 +23,29 @@ def to_rle(img):
     return encoded_data
 
 
+f = open(f'anim.c', 'w')
+header = '''
+#ifdef __has_include
+    #if __has_include("lvgl.h")
+        #ifndef LV_LVGL_H_INCLUDE_SIMPLE
+            #define LV_LVGL_H_INCLUDE_SIMPLE
+        #endif
+    #endif
+#endif
+
+#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
+    #include "lvgl.h"
+#else
+    #include "lvgl/lvgl.h"
+#endif
+
+
+#ifndef LV_ATTRIBUTE_MEM_ALIGN
+#define LV_ATTRIBUTE_MEM_ALIGN
+#endif
+'''
+print(header, file=f)
+
 for i in range(0, NIMGS):
     if True:
         img = cv.imread(f'../res/{i:02d}.png', cv.IMREAD_UNCHANGED)
@@ -69,25 +92,6 @@ for i in range(0, NIMGS):
     print(len(rle))
     rle_str = ', '.join(map(str, rle))
     template = f'''
-#ifdef __has_include
-    #if __has_include("lvgl.h")
-        #ifndef LV_LVGL_H_INCLUDE_SIMPLE
-            #define LV_LVGL_H_INCLUDE_SIMPLE
-        #endif
-    #endif
-#endif
-
-#if defined(LV_LVGL_H_INCLUDE_SIMPLE)
-    #include "lvgl.h"
-#else
-    #include "lvgl/lvgl.h"
-#endif
-
-
-#ifndef LV_ATTRIBUTE_MEM_ALIGN
-#define LV_ATTRIBUTE_MEM_ALIGN
-#endif
-
 #ifndef LV_ATTRIBUTE_IMG_ANIM_{i:02d}
 #define LV_ATTRIBUTE_IMG_ANIM_{i:02d}
 #endif
@@ -109,7 +113,6 @@ const lv_img_dsc_t anim_{i:02d} = {{
 }};
     '''
 
-    f = open(f'anim_{i:02d}.c', 'w')
     print(template, file=f)
 
     img = palette[img]
