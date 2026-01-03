@@ -192,12 +192,13 @@ void draw_flame(const lv_img_dsc_t *in, lv_img_dsc_t *out) {
     lv_color_t col[NCOLORS];
     uint8_t    alpha[NCOLORS];
     for (int i = 0; i < NCOLORS; ++i) {
-        uint8_t red   = 255 - in->data[i * 3 + 1];
-        uint8_t green = in->data[i * 3 + 1];
-        uint8_t blue  = in->data[i * 3 + 1];
+        uint8_t idx = in->data[i * 3 + 1];
+        if (idx > 127)
+            col[i] = lv_color_make(255 - idx, idx, idx);
+        else
+            col[i] = lv_color_make(255, 0, 0);
 
-        col[i]   = lv_color_make(red, green, blue);
-        alpha[i] = in->data[i * 3 + 1];
+        alpha[i] = idx;
     }
 
     int x0 = in->data[NCOLORS * 3 + 0];
