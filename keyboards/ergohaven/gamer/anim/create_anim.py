@@ -23,6 +23,68 @@ def to_rle(img):
     return encoded_data
 
 
+def find_roi(img):
+    if np.count_nonzero(img) == 0:
+        return 0, 0, 0, 0
+
+    x0, y0 = 0, 0
+    x1, y1 = WIDTH - 1, HEIGHT - 1
+    while np.count_nonzero(img[:, x0]) == 0:
+        x0 += 1
+    while np.count_nonzero(img[:, x1]) == 0:
+        x1 -= 1
+    while np.count_nonzero(img[y0, :]) == 0:
+        y0 += 1
+    while np.count_nonzero(img[y1, :]) == 0:
+        y1 -= 1
+    return x0, y0, x1, y1
+
+
+def reduce_palette(img):
+    pilimg = Image.fromarray(img)
+    pilimg = pilimg.quantize(colors=NCOLORS, method=Image.Quantize.FASTOCTREE)
+    # put background as first color
+    colors = pilimg.getcolors()
+    new_colors = sorted(colors, key=lambda x: x[0], reverse=True)
+    pilimg = pilimg.remap_palette([x[1] for x in new_colors])
+    palette = np.array(pilimg.getpalette(), dtype=np.uint8).reshape(-1, 3)[:NCOLORS, ::]
+    palette = palette.copy()
+    palette.resize((NCOLORS, 3))
+    return np.array(pilimg), palette
+
+
+def to_lvgl_code(img, palette, name, fmt='LV_IMG_CF_USER_ENCODED_0'):
+    colors = []
+    for b, g, r in palette:
+        colors.extend((r, g, b))
+    h, w = img.shape
+    x0, y0, x1, y1 = find_roi(img)
+    img = img[y0:y1 + 1, x0:x1 + 1]
+    rle = to_rle(img)
+    data = colors + [x0, y0, img.shape[1], img.shape[0]] + rle
+
+    template = f'''
+#ifndef LV_ATTRIBUTE_IMG_{name.upper()}
+#define LV_ATTRIBUTE_IMG_{name.upper()}
+#endif
+
+const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_{name.upper()} uint8_t {name}_map[] = {{
+{', '.join(map(str, data))}
+}};
+
+const lv_img_dsc_t {name} = {{
+  .header.cf = {fmt},
+  .header.always_zero = 0,
+  .header.reserved = 0,
+  .header.w = {w},
+  .header.h = {h},
+  .data_size = {len(data)},
+  .data = {name}_map,
+}};
+    '''
+    return template
+
+
 f = open(f'anim.c', 'w')
 header = '''
 #ifdef __has_include
@@ -47,76 +109,36 @@ header = '''
 print(header, file=f)
 
 for i in range(0, NIMGS):
-    if True:
-        img = cv.imread(f'../res/{i:02d}.png', cv.IMREAD_UNCHANGED)
-        mask = img[..., 3] > 1
-        for c in range(3):
-            img[..., c] = img[..., c] * (img[..., 3] / 255)
-        img[~mask] = (255, 0, 0, 0)
-        img = img[..., :3]
-        img = img[..., ::-1]
-        pilimg = Image.fromarray(img)
-    else:
-        pilimg = Image.open(f'../res/{i:02d}.png')
-    print(pilimg.getpalette())
-    print('pillow mode', pilimg.mode)
-    pilimg = pilimg.quantize(colors=NCOLORS, method=Image.Quantize.FASTOCTREE)
-    print(pilimg.getpalette())
+    print(i)
+    img = cv.imread(f'../res/{i:02d}.png', cv.IMREAD_UNCHANGED)
+    alpha = img[..., 3].copy()
+    for c in range(3):
+        img[..., c] = img[..., c] * (alpha / 255.0)
+    img = img[..., :3]
 
-    # put background as first color
-    colors = pilimg.getcolors()
-    new_colors = sorted(colors, key=lambda x: x[0], reverse=True)
-    pilimg = pilimg.remap_palette([x[1] for x in new_colors])
-    # pilimg.show()
+    img_ship = img.copy()
+    mask_ship = alpha > 254
+    kernel = np.ones((3, 3), np.uint8)
+    mask_ship = cv.dilate(mask_ship.astype(np.uint8), kernel).astype(bool)
 
-    palette = np.array(pilimg.getpalette(), dtype=np.uint8).reshape(-1, 3)[:NCOLORS, ::-1]
-    palette_str = []
-    for j, (b, g, r) in enumerate(palette):
-        palette_str.append(f'{r}, {g}, {b}, // color {j}')
-    palette_str = '\n'.join(palette_str)
+    img_ship[~mask_ship] = (255, 0, 0)
 
-    img = np.array(pilimg)
-    roi_x0, roi_y0 = 0, 0
-    roi_x1, roi_y1 = WIDTH - 1, HEIGHT - 1
-    while np.count_nonzero(img[:, roi_x0]) == 0:
-        roi_x0 += 1
-    while np.count_nonzero(img[:, roi_x1]) == 0:
-        roi_x1 -= 1
-    while np.count_nonzero(img[roi_y0, :]) == 0:
-        roi_y0 += 1
-    while np.count_nonzero(img[roi_y1, :]) == 0:
-        roi_y1 -= 1
+    img_flame = img.copy()
+    mask_flame = (alpha > 0) & (alpha < 255) & (img_ship[..., 0] == 255)
+    img_flame[~mask_flame] = (0, 0, 0)
+    img_flame = (img_flame.astype(np.float32) / img_flame.max() * 255).astype(np.uint8)
 
-    img = img[roi_y0:roi_y1 + 1, roi_x0:roi_x1 + 1]
-    rle = to_rle(img)
-    print(len(rle))
-    rle_str = ', '.join(map(str, rle))
-    name = f'anim_{i:02d}'
-    template = f'''
-#ifndef LV_ATTRIBUTE_IMG_{name.upper()}
-#define LV_ATTRIBUTE_IMG_{name.upper()}
-#endif
+    img_ship, palette_ship = reduce_palette(img_ship)
+    ship_code = to_lvgl_code(img_ship, palette_ship, f'anim_{i:02d}')
+    print(ship_code, file=f)
 
-const LV_ATTRIBUTE_MEM_ALIGN LV_ATTRIBUTE_LARGE_CONST LV_ATTRIBUTE_IMG_{name.upper()} uint8_t {name}_map[] = {{
-{palette_str}
-{roi_x0}, {roi_y0}, {img.shape[1]}, {img.shape[0]}, // x0 y0 w h
-{rle_str}
-}};
+    img_flame, palette_flame = reduce_palette(img_flame)
+    flame_code = to_lvgl_code(img_flame, palette_flame, f'flame_{i:02d}')
+    print(flame_code, file=f)
 
-const lv_img_dsc_t {name} = {{
-  .header.cf = LV_IMG_CF_USER_ENCODED_0,
-  .header.always_zero = 0,
-  .header.reserved = 0,
-  .header.w = {WIDTH},
-  .header.h = {HEIGHT},
-  .data_size = {len(rle) + NCOLORS*3},
-  .data = {name}_map,
-}};
-    '''
+    combine = palette_ship[img_ship].copy()
+    combine[mask_flame] = palette_flame[img_flame][mask_flame]
+    cv.imshow('combine', combine)
 
-    print(template, file=f)
-
-    img = palette[img]
-    cv.imshow('img', img)
-    if cv.waitKey(1) in [27, ord('q')]:
+    if cv.waitKey(0) in [27, ord('q')]:
         break

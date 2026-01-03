@@ -30,9 +30,31 @@ LV_IMG_DECLARE(anim_13);
 LV_IMG_DECLARE(anim_14);
 LV_IMG_DECLARE(anim_15);
 
-static const lv_img_dsc_t *anim_on[] = {
+LV_IMG_DECLARE(flame_00);
+LV_IMG_DECLARE(flame_01);
+LV_IMG_DECLARE(flame_02);
+LV_IMG_DECLARE(flame_03);
+LV_IMG_DECLARE(flame_04);
+LV_IMG_DECLARE(flame_05);
+LV_IMG_DECLARE(flame_06);
+LV_IMG_DECLARE(flame_07);
+LV_IMG_DECLARE(flame_08);
+LV_IMG_DECLARE(flame_09);
+LV_IMG_DECLARE(flame_10);
+LV_IMG_DECLARE(flame_11);
+LV_IMG_DECLARE(flame_12);
+LV_IMG_DECLARE(flame_13);
+LV_IMG_DECLARE(flame_14);
+LV_IMG_DECLARE(flame_15);
+
+static const lv_img_dsc_t *ship_frame[] = {
     &anim_00, &anim_01, &anim_02, &anim_03, &anim_04, &anim_05, &anim_06, &anim_07, &anim_08, &anim_09, //
     &anim_10, &anim_11, &anim_12, &anim_13, &anim_14, &anim_15,                                         //
+};
+
+static const lv_img_dsc_t *flame_frame[] = {
+    &flame_00, &flame_01, &flame_02, &flame_03, &flame_04, &flame_05, &flame_06, &flame_07, &flame_08, &flame_09, //
+    &flame_10, &flame_11, &flame_12, &flame_13, &flame_14, &flame_15,                                             //
 };
 
 static lv_obj_t *anim_start;
@@ -42,7 +64,6 @@ static int32_t   anim_index = 0;
 const int    IMG_WIDTH  = 240;
 const int    IMG_HEIGHT = 224;
 lv_img_dsc_t custom_img_dsc;
-uint16_t    *image_data_buffer;
 
 void splash2_screen_init(void) {
     screen_splash2 = lv_obj_create(NULL);
@@ -54,8 +75,8 @@ void splash2_screen_init(void) {
     lv_obj_set_style_pad_top(anim_start, 0, 0);
     lv_obj_set_style_pad_bottom(anim_start, 0, 0);
 
-    const int data_size = IMG_WIDTH * IMG_HEIGHT * 2;
-    image_data_buffer   = (uint16_t *)lv_mem_alloc(data_size);
+    const int data_size         = IMG_WIDTH * IMG_HEIGHT * 2;
+    uint16_t *image_data_buffer = (uint16_t *)lv_mem_alloc(data_size);
     memset(image_data_buffer, 0, data_size);
     custom_img_dsc.header.always_zero = 0;
     custom_img_dsc.header.w           = IMG_WIDTH;
@@ -63,13 +84,6 @@ void splash2_screen_init(void) {
     custom_img_dsc.data_size          = data_size;
     custom_img_dsc.header.cf          = LV_IMG_CF_TRUE_COLOR; /*Set the color format*/
     custom_img_dsc.data               = (uint8_t *)image_data_buffer;
-}
-
-void splash2_screen_load(void) {
-    lv_scr_load(screen_splash2);
-    anim_timer = 0;
-    anim_index = 0;
-    srand(timer_read32());
 }
 
 void draw_stars(lv_img_dsc_t *out) {
@@ -142,7 +156,7 @@ void draw_stars(lv_img_dsc_t *out) {
 
 const int NCOLORS = 16;
 
-void load_rle(const lv_img_dsc_t *in, lv_img_dsc_t *out) {
+void draw_ship(const lv_img_dsc_t *in, lv_img_dsc_t *out) {
     uint16_t col[NCOLORS];
     for (int i = 0; i < NCOLORS; ++i) {
         uint8_t red   = in->data[i * 3 + 0];
@@ -162,24 +176,69 @@ void load_rle(const lv_img_dsc_t *in, lv_img_dsc_t *out) {
     for (int i = NCOLORS * 3 + 4; i < in->data_size; ++i) {
         uint8_t d   = in->data[i];
         uint8_t idx = d & 0b1111;
-        uint8_t run = d >> 4;
-        if (idx == 0) {
-            u += run;
-            out_data += out->header.w * (u / w);
-            u %= w;
-        } else
-            for (; run > 0; --run, ++u) {
-                if (u > w) {
-                    u = 0;
-                    out_data += out->header.w;
-                }
-                out_data[u] = col[idx];
+        int     run = d >> 4;
+
+        for (; run > 0; --run, ++u) {
+            if (u >= w) {
+                u -= w;
+                out_data += out->header.w;
             }
+            if (idx != 0) out_data[u] = col[idx];
+        }
+    }
+}
+
+void draw_flame(const lv_img_dsc_t *in, lv_img_dsc_t *out) {
+    lv_color_t col[NCOLORS];
+    uint8_t    alpha[NCOLORS];
+    for (int i = 0; i < NCOLORS; ++i) {
+        uint8_t red   = 255 - in->data[i * 3 + 1];
+        uint8_t green = in->data[i * 3 + 1];
+        uint8_t blue  = in->data[i * 3 + 1];
+
+        col[i]   = lv_color_make(red, green, blue);
+        alpha[i] = in->data[i * 3 + 1];
+    }
+
+    int x0 = in->data[NCOLORS * 3 + 0];
+    int y0 = in->data[NCOLORS * 3 + 1];
+    int w  = in->data[NCOLORS * 3 + 2];
+    // int h  = in->data[NCOLORS * 3 + 3];
+    int u = 0;
+
+    lv_color_t *out_data = (lv_color_t *)(out->data) + y0 * out->header.w + x0;
+
+    for (int i = NCOLORS * 3 + 4; i < in->data_size; ++i) {
+        uint8_t d   = in->data[i];
+        uint8_t idx = d & 0b1111;
+        int     run = d >> 4;
+
+        for (; run > 0; --run, ++u) {
+            if (u >= w) {
+                u -= w;
+                out_data += out->header.w;
+            }
+            if (idx != 0) out_data[u] = lv_color_mix(col[idx], out_data[u], alpha[idx]);
+        }
     }
 }
 
 void splash2_screen_housekeep(void) {
-    if (timer_elapsed32(anim_timer) > 50) {
+    static bool frame_drawn = false;
+    static int  frame_idx   = -1;
+    if (!frame_drawn) {
+        draw_stars(&custom_img_dsc);
+        if (frame_idx >= 0) {
+            draw_ship(ship_frame[frame_idx], &custom_img_dsc);
+            draw_flame(flame_frame[frame_idx], &custom_img_dsc);
+        }
+        frame_drawn = true;
+        return;
+    } else if (timer_elapsed32(anim_timer) > 50) {
+        lv_img_set_src(anim_start, &custom_img_dsc);
+        anim_timer = timer_read32();
+        anim_index += 1;
+
         const static int TABLE[] = {
             9,  15, 9,  15, 9,  15, 9,  15, 9,  15, //
             9,  15, 9,  15, 9,  15, 9,  15, 9,  15, //
@@ -193,16 +252,23 @@ void splash2_screen_housekeep(void) {
             12, 11, 10,                             //
         };
 
-        int frame_idx = -1;
-        if (anim_index > 5) frame_idx = anim_index - 5;
-        if (anim_index >= 14) frame_idx = TABLE[(anim_index - 14) % ARRAY_SIZE(TABLE)];
-        // dprintf("anim %ld frame %d\n", anim_index, frame_idx);
-        draw_stars(&custom_img_dsc);
-        if (frame_idx >= 0) load_rle(anim_on[frame_idx], &custom_img_dsc);
-        lv_img_set_src(anim_start, &custom_img_dsc);
-        anim_timer = timer_read32();
-        anim_index += 1;
+        if (anim_index >= 14)
+            frame_idx = TABLE[(anim_index - 14) % ARRAY_SIZE(TABLE)];
+        else if (anim_index > 5)
+            frame_idx = anim_index - 5;
+        else
+            frame_idx = -1;
+
+        frame_drawn = false;
     }
+}
+
+void splash2_screen_load(void) {
+    anim_timer = 0;
+    anim_index = 0;
+    srand(timer_read32());
+    splash2_screen_housekeep();
+    lv_scr_load(screen_splash2);
 }
 
 const eh_screen_t eh_screen_splash2 = {
@@ -283,7 +349,7 @@ void display_housekeeping_task(void) {
                     change_screen_state = SCREEN_HOME;
                 } else if (activity_elapsed > EH_TIMEOUT) {
                     change_screen_state = SCREEN_OFF;
-                } else if (activity_elapsed > 10000) {
+                } else if (activity_elapsed > 5000) {
                     change_screen_state = SCREEN_SPLASH;
                 }
                 break;
