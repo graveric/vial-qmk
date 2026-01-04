@@ -1,7 +1,7 @@
 #include "ergohaven.h"
 #include "ergohaven_settings.h"
 #include "ergohaven_ruen.h"
-#include "ergohaven_oled.h"
+#include "src/oled/ergohaven_oled.h"
 #include "ergohaven_rgb.h"
 #include "ergohaven_display.h"
 #include "ergohaven_pointing.h"
