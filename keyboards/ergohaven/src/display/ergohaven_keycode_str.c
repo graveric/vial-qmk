@@ -1,4 +1,4 @@
-#include "ergohaven_keycode_str.h"
+#include "src/display/ergohaven_keycode_str.h"
 
 #include "keycodes.h"
 #include "ergohaven.h"

@@ -52,4 +52,4 @@ SRC += keyboards/ergohaven/src/display/ergohaven_logo.c
 SRC += anim/anim.c
 SRC += display_modes.c
 SRC += screen_layout.c
-SRC += keyboards/ergohaven/ergohaven_keycode_str.c
+SRC += keyboards/ergohaven/src/display/ergohaven_keycode_str.c
