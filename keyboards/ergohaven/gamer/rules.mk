@@ -44,10 +44,10 @@ SRC += keyboards/ergohaven/ergohaven_settings.c
 
 SRC += keyboards/ergohaven/ergohaven_display.c
 SRC += keyboards/ergohaven/lvgl_helpers.c
-SRC += keyboards/ergohaven/ergohaven_symbols_16.c
-SRC += keyboards/ergohaven/ergohaven_symbols_20.c
-SRC += keyboards/ergohaven/ergohaven_symbols_22.c
-SRC += keyboards/ergohaven/ergohaven_symbols_28.c
+SRC += keyboards/ergohaven/src/fonts/ergohaven_symbols_16.c
+SRC += keyboards/ergohaven/src/fonts/ergohaven_symbols_20.c
+SRC += keyboards/ergohaven/src/fonts/ergohaven_symbols_22.c
+SRC += keyboards/ergohaven/src/fonts/ergohaven_symbols_28.c
 SRC += keyboards/ergohaven/ergohaven_logo.c
 SRC += anim/anim.c
 SRC += display_modes.c
