@@ -1,6 +1,6 @@
-#include "ergohaven_display.h"
+#include "src/display/ergohaven_display.h"
 #include "src/display/ergohaven_keycode_str.h"
-#include "lvgl_helpers.h"
+#include "src/display/lvgl_helpers.h"
 #include "ergohaven.h"
 #include "ergohaven_settings.h"
 

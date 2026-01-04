@@ -14,12 +14,12 @@ RAW_ENABLE = yes
 
 SRC += keyboards/ergohaven/ergohaven_pointing.c
 
-SRC += keyboards/ergohaven/ergohaven_display.c
-SRC += keyboards/ergohaven/lvgl_helpers.c
+SRC += keyboards/ergohaven/src/display/ergohaven_display.c
+SRC += keyboards/ergohaven/src/display/lvgl_helpers.c
 SRC += keyboards/ergohaven/src/display/fonts/ergohaven_symbols_20.c
 SRC += keyboards/ergohaven/src/display/fonts/ergohaven_symbols_28.c
 SRC += keyboards/ergohaven/src/display/ergohaven_logo.c
-SRC += keyboards/ergohaven/ergohaven_display_modes.c
+SRC += keyboards/ergohaven/src/display/ergohaven_display_modes.c
 
 SRC += keyboards/ergohaven/ergohaven_main.c
 SRC += keyboards/ergohaven/ergohaven_ruen.c

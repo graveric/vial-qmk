@@ -1,8 +1,8 @@
-#include "ergohaven_display.h"
-#include "src/display/ergohaven_keycode_str.h"
-#include "lvgl_helpers.h"
 #include "ergohaven.h"
 #include "ergohaven_settings.h"
+#include "src/display/ergohaven_display.h"
+#include "src/display/ergohaven_keycode_str.h"
+#include "src/display/lvgl_helpers.h"
 
 LV_FONT_DECLARE(ergohaven_symbols_16);
 LV_FONT_DECLARE(ergohaven_symbols_22);

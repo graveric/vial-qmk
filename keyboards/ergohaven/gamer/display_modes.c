@@ -3,9 +3,9 @@
 #include "ergohaven_ruen.h"
 #include "hid.h"
 #include "ergohaven.h"
-#include "ergohaven_symbols.h"
-#include "ergohaven_display.h"
-#include "lvgl_helpers.h"
+#include "src/display/ergohaven_symbols.h"
+#include "src/display/ergohaven_display.h"
+#include "src/display/lvgl_helpers.h"
 
 extern const eh_screen_t eh_screen_layout;
 

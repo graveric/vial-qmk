@@ -3,7 +3,7 @@
 #include "ergohaven_ruen.h"
 #include "src/oled/ergohaven_oled.h"
 #include "ergohaven_rgb.h"
-#include "ergohaven_display.h"
+#include "src/display/ergohaven_display.h"
 #include "ergohaven_pointing.h"
 #include "hid.h"
 #include "version.h"

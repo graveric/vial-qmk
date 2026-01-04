@@ -3,7 +3,7 @@
 #include "ergohaven.h"
 #include "display.h"
 #include "ergohaven_pointing.h"
-#include "ergohaven_display.h"
+#include "src/display/ergohaven_display.h"
 #include "ergohaven_ruen.h"
 
 // clang-format off
