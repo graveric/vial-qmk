@@ -16,8 +16,8 @@ SRC += keyboards/ergohaven/ergohaven_pointing.c
 
 SRC += keyboards/ergohaven/ergohaven_display.c
 SRC += keyboards/ergohaven/lvgl_helpers.c
-SRC += keyboards/ergohaven/src/fonts/ergohaven_symbols_20.c
-SRC += keyboards/ergohaven/src/fonts/ergohaven_symbols_28.c
+SRC += keyboards/ergohaven/src/display/fonts/ergohaven_symbols_20.c
+SRC += keyboards/ergohaven/src/display/fonts/ergohaven_symbols_28.c
 SRC += keyboards/ergohaven/ergohaven_logo.c
 SRC += keyboards/ergohaven/ergohaven_display_modes.c
 
