@@ -4,7 +4,7 @@
 #include "ergohaven.h"
 #include "ergohaven_settings.h"
 
-LV_FONT_DECLARE(ergohaven_symbols_18);
+LV_FONT_DECLARE(ergohaven_symbols_16);
 LV_FONT_DECLARE(ergohaven_symbols_22);
 LV_FONT_DECLARE(ergohaven_symbols_28);
 
@@ -35,7 +35,7 @@ static lv_obj_t *screen_layout;
 static lv_obj_t *key_labels[NLABELS];
 static bool      label_big[NLABELS];
 static uint16_t  label_kc[NLABELS];
-static char      label_text[NLABELS][16];
+static char      label_text[NLABELS][24];
 static lv_obj_t *label_layer_small;
 
 void screen_layout_init(void) {
@@ -159,7 +159,7 @@ void screen_layout_housekeep(void) {
             lv_obj_set_style_text_font(key_labels[lbl_idx], &ergohaven_symbols_22, LV_PART_MAIN);
         } else if (len > 3 && label_big[lbl_idx]) {
             label_big[lbl_idx] = false;
-            lv_obj_set_style_text_font(key_labels[lbl_idx], &ergohaven_symbols_18, LV_PART_MAIN);
+            lv_obj_set_style_text_font(key_labels[lbl_idx], &ergohaven_symbols_16, LV_PART_MAIN);
         }
         lv_label_set_text_static(key_labels[lbl_idx], label_text[lbl_idx]);
         label_kc[lbl_idx] = keycode;

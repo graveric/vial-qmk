@@ -671,97 +671,70 @@ bool special_keycode_str(char *buf, uint16_t keycode) {
     }
 }
 
-bool mods_keycode_to_str(char *str, uint16_t keycode) {
-    uint8_t mods  = QK_MODS_GET_MODS(keycode);
-    bool    ctrl  = mods & MOD_MASK_CTRL;
-    bool    shift = mods & MOD_MASK_SHIFT;
-    bool    alt   = mods & MOD_MASK_ALT;
-    bool    gui   = mods & MOD_MASK_GUI;
+const char *mods_to_str(uint8_t mods) {
+    bool ctrl  = mods & MOD_MASK_CTRL;
+    bool shift = mods & MOD_MASK_SHIFT;
+    bool alt   = mods & MOD_MASK_ALT;
+    bool gui   = mods & MOD_MASK_GUI;
 
-    char *mod_str;
+    const char *mod_str;
     if (ctrl && shift && alt && gui)
-        mod_str = "󰘴󰘶󰘵\n ";
+        mod_str = "All";
     else if (shift && alt && gui)
-        mod_str = "󰘶󰘵\n ";
+        mod_str = "󰘶󰘵";
     else if (ctrl && alt && gui)
-        mod_str = "󰘴󰘵\n ";
+        mod_str = "󰘴󰘵";
     else if (ctrl && shift && gui)
-        mod_str = "󰘴󰘶\n ";
+        mod_str = "󰘴󰘶";
     else if (ctrl && shift && alt)
-        mod_str = "󰘴󰘶\n󰘵 ";
+        mod_str = "󰘴󰘶󰘵";
     else if (alt && gui)
-        mod_str = "󰘵\n";
+        mod_str = "󰘵";
     else if (shift && gui)
-        mod_str = "󰘶\n";
+        mod_str = "󰘶";
     else if (shift && alt)
-        mod_str = "󰘶󰘵\n";
+        mod_str = "󰘶󰘵";
     else if (ctrl && gui)
-        mod_str = "󰘴\n";
+        mod_str = "󰘴";
     else if (ctrl && shift)
-        mod_str = "󰘴󰘶\n";
+        mod_str = "󰘴󰘶";
     else if (ctrl && alt)
-        mod_str = "󰘴󰘵\n";
+        mod_str = "󰘴󰘵";
     else if (ctrl)
-        mod_str = "󰘴 ";
+        mod_str = "󰘴";
     else if (shift)
-        mod_str = "󰘶 ";
+        mod_str = "󰘶";
     else if (alt)
-        mod_str = "󰘵 ";
+        mod_str = "󰘵";
     else if (gui)
-        mod_str = " ";
+        mod_str = "";
     else
         mod_str = "";
+    return mod_str;
+}
 
-    uint8_t     basic_keycode     = QK_MODS_GET_BASIC_KEYCODE(keycode);
-    const char *basic_keycode_str = basic_keycode_to_str(basic_keycode);
-    sprintf(str, "%s%s", mod_str, basic_keycode_str);
+bool mods_keycode_to_str(char *str, uint16_t keycode) {
+    uint8_t     mods      = QK_MODS_GET_MODS(keycode);
+    const char *basic_str = basic_keycode_to_str(QK_MODS_GET_BASIC_KEYCODE(keycode));
+    if (mods == 0) {
+        sprintf(str, "%s", basic_str);
+    } else {
+        const char *mod_str = mods_to_str(mods);
+        sprintf(str, "%s\n%s", mod_str, basic_str);
+    }
     return true;
 }
 
 bool modtap_keycode_to_str(char *str, uint16_t keycode) {
-    uint8_t mods  = QK_MOD_TAP_GET_MODS(keycode);
-    bool    ctrl  = mods & MOD_MASK_CTRL;
-    bool    shift = mods & MOD_MASK_SHIFT;
-    bool    alt   = mods & MOD_MASK_ALT;
-    bool    gui   = mods & MOD_MASK_GUI;
+    const char *mod_str   = mods_to_str(QK_MOD_TAP_GET_MODS(keycode));
+    const char *basic_str = basic_keycode_to_str(QK_MOD_TAP_GET_TAP_KEYCODE(keycode));
+    sprintf(str, "%s\\\n%s", mod_str, basic_str);
+    return true;
+}
 
-    char *mod_str;
-    if (ctrl && shift && alt && gui)
-        mod_str = "󰘴󰘶󰘵\n ";
-    else if (shift && alt && gui)
-        mod_str = "󰘶󰘵\n ";
-    else if (ctrl && alt && gui)
-        mod_str = "󰘴󰘵\n ";
-    else if (ctrl && shift && gui)
-        mod_str = "󰘴󰘶\n ";
-    else if (ctrl && shift && alt)
-        mod_str = "󰘴󰘶\n󰘵 ";
-    else if (alt && gui)
-        mod_str = "󰘵\n";
-    else if (shift && gui)
-        mod_str = "󰘶\n";
-    else if (shift && alt)
-        mod_str = "󰘶󰘵\n";
-    else if (ctrl && gui)
-        mod_str = "󰘴\n";
-    else if (ctrl && shift)
-        mod_str = "󰘴󰘶\n";
-    else if (ctrl && alt)
-        mod_str = "󰘴󰘵\n";
-    else if (ctrl)
-        mod_str = "󰘴 ";
-    else if (shift)
-        mod_str = "󰘶 ";
-    else if (alt)
-        mod_str = "󰘵 ";
-    else if (gui)
-        mod_str = " ";
-    else
-        mod_str = "";
-
-    uint8_t     basic_keycode     = QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
-    const char *basic_keycode_str = basic_keycode_to_str(basic_keycode);
-    sprintf(str, "%s/%s", mod_str, basic_keycode_str);
+bool osm_keycode_to_str(char *str, uint16_t keycode) {
+    const char *mod_str = mods_to_str(QK_ONE_SHOT_MOD_GET_MODS(keycode));
+    sprintf(str, "OSM\n%s", mod_str);
     return true;
 }
 
@@ -772,8 +745,10 @@ void get_keycode_str(char *str, uint16_t keycode) {
         mods_keycode_to_str(str, keycode);
     else if (IS_QK_MOD_TAP(keycode))
         modtap_keycode_to_str(str, keycode);
+    else if (IS_QK_ONE_SHOT_MOD(keycode))
+        osm_keycode_to_str(str, keycode);
     else
-        sprintf(str, "UNDEF");
+        sprintf(str, "Undf");
 }
 
 const char *keycode_to_str(uint16_t keycode) {
