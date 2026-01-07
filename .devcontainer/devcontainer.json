@@ -1,0 +1,22 @@
+{
+  "name": "QMK Firmware",
+  "image": "qmkfm/qmk_cli:latest",
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-python.python"
+      ]
+    }
+  },
+  "runArgs": [
+    "--privileged",
+    "-v", "/dev/bus/usb:/dev/bus/usb"
+  ],
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/qmk_firmware,type=bind"
+  ],
+  "workspaceFolder": "/qmk_firmware",
+  "postCreateCommand": "qmk setup -y"
+}

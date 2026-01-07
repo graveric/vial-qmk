@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  qmk:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/workspaces/qmk_firmware
+      - qmk_data:/home/vscode/.local/share/qmk
+    privileged: true
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+volumes:
+  qmk_data:
