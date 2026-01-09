@@ -4,9 +4,9 @@
 #include "src/display/ergohaven_keycode_str.h"
 #include "src/display/lvgl_helpers.h"
 
-LV_FONT_DECLARE(ergohaven_symbols_16);
-LV_FONT_DECLARE(ergohaven_symbols_22);
-LV_FONT_DECLARE(ergohaven_symbols_28);
+LV_FONT_DECLARE(eh_font_iosevka_16);
+LV_FONT_DECLARE(eh_font_iosevka_22);
+LV_FONT_DECLARE(eh_font_iosevka_28);
 
 const char *default_layer_label(uint8_t layer) {
     static const char *PROGMEM default_layer_labels[] = {
@@ -77,7 +77,7 @@ void screen_layout_init(void) {
 
         key_labels[i] = lv_label_create(obj);
         lv_obj_center(key_labels[i]);
-        lv_obj_set_style_text_font(key_labels[i], &ergohaven_symbols_22, LV_PART_MAIN);
+        lv_obj_set_style_text_font(key_labels[i], &eh_font_iosevka_22, LV_PART_MAIN);
         lv_obj_set_style_text_align(key_labels[i], LV_TEXT_ALIGN_CENTER, 0);
         lv_label_set_text_static(key_labels[i], "");
         label_big[i] = true;
@@ -89,7 +89,7 @@ void screen_layout_init(void) {
     lv_obj_set_style_pad_top(label_layer_small, 10, 0);
     lv_obj_set_style_pad_bottom(label_layer_small, 0, 0);
     // lv_obj_set_style_text_color(label_layer_small, accent_color_blue, 0);
-    lv_obj_set_style_text_font(label_layer_small, &ergohaven_symbols_28, LV_PART_MAIN);
+    lv_obj_set_style_text_font(label_layer_small, &eh_font_iosevka_28, LV_PART_MAIN);
 }
 
 static uint8_t prev_layer = 255;
@@ -156,10 +156,10 @@ void screen_layout_housekeep(void) {
 
         if (len <= 3 && !label_big[lbl_idx]) {
             label_big[lbl_idx] = true;
-            lv_obj_set_style_text_font(key_labels[lbl_idx], &ergohaven_symbols_22, LV_PART_MAIN);
+            lv_obj_set_style_text_font(key_labels[lbl_idx], &eh_font_iosevka_22, LV_PART_MAIN);
         } else if (len > 3 && label_big[lbl_idx]) {
             label_big[lbl_idx] = false;
-            lv_obj_set_style_text_font(key_labels[lbl_idx], &ergohaven_symbols_16, LV_PART_MAIN);
+            lv_obj_set_style_text_font(key_labels[lbl_idx], &eh_font_iosevka_16, LV_PART_MAIN);
         }
         lv_label_set_text_static(key_labels[lbl_idx], label_text[lbl_idx]);
         label_kc[lbl_idx] = keycode;

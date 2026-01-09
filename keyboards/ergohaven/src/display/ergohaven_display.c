@@ -8,8 +8,8 @@
 #include "ergohaven_settings.h"
 #include "ergohaven.h"
 
-LV_FONT_DECLARE(ergohaven_symbols_20);
-LV_FONT_DECLARE(ergohaven_symbols_28);
+LV_FONT_DECLARE(eh_font_montserrat_20);
+LV_FONT_DECLARE(eh_font_montserrat_28);
 
 painter_device_t display;
 
@@ -252,14 +252,14 @@ void screen_home_init(void) {
     lv_obj_set_pos(label_layer, 0, 100);
     lv_obj_set_size(label_layer, 110, 20);
     lv_obj_set_style_text_align(label_layer, LV_TEXT_ALIGN_RIGHT, 0);
-    lv_obj_set_style_text_font(label_layer, &ergohaven_symbols_20, LV_PART_MAIN);
+    lv_obj_set_style_text_font(label_layer, &eh_font_montserrat_20, LV_PART_MAIN);
 
     label_mac = lv_label_create(screen_home);
     lv_label_set_text(label_mac, EH_SYMBOL_MAC);
     lv_obj_set_pos(label_mac, 110, 100);
     lv_obj_set_size(label_mac, 46, 20);
     lv_obj_set_style_text_align(label_mac, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_font(label_mac, &ergohaven_symbols_20, LV_PART_MAIN);
+    lv_obj_set_style_text_font(label_mac, &eh_font_montserrat_20, LV_PART_MAIN);
     toggle_hidden(label_mac, false);
 
     label_layout = lv_label_create(screen_home);
@@ -267,7 +267,7 @@ void screen_home_init(void) {
     lv_obj_set_pos(label_layout, 160, 100);
     lv_obj_set_size(label_layout, 80, 20);
     lv_obj_set_style_text_align(label_layout, LV_TEXT_ALIGN_LEFT, 0);
-    lv_obj_set_style_text_font(label_layout, &ergohaven_symbols_20, LV_PART_MAIN);
+    lv_obj_set_style_text_font(label_layout, &eh_font_montserrat_20, LV_PART_MAIN);
 
     screen_home_mods = lv_obj_create(screen_home);
     lv_obj_add_style(screen_home_mods, &style_container, 0);
@@ -296,7 +296,7 @@ void screen_home_init(void) {
     lv_label_set_long_mode(label_hid_media_title, LV_LABEL_LONG_WRAP);
     lv_obj_set_width(label_hid_media_title, lv_pct(95));
     lv_obj_set_style_text_align(label_hid_media_title, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_font(label_hid_media_title, &ergohaven_symbols_28, LV_PART_MAIN);
+    lv_obj_set_style_text_font(label_hid_media_title, &eh_font_montserrat_28, LV_PART_MAIN);
     lv_obj_set_style_pad_top(label_hid_media_title, 0, 0);
     lv_obj_set_style_pad_bottom(label_hid_media_title, 0, 0);
 
@@ -305,7 +305,7 @@ void screen_home_init(void) {
     lv_label_set_long_mode(label_hid_media_artist, LV_LABEL_LONG_WRAP);
     lv_obj_set_width(label_hid_media_artist, lv_pct(95));
     lv_obj_set_style_text_align(label_hid_media_artist, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_font(label_hid_media_artist, &ergohaven_symbols_20, LV_PART_MAIN);
+    lv_obj_set_style_text_font(label_hid_media_artist, &eh_font_montserrat_20, LV_PART_MAIN);
 
     lv_obj_set_style_pad_top(label_hid_media_artist, 10, 0);
     lv_obj_set_style_text_color(label_hid_media_artist, accent_color_blue, 0);

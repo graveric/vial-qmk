@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Size: 22 px
  * Bpp: 4
- * Opts: --bpp 4 --size 22 --no-compress --stride 1 --align 1 --font IosevkaNerdFontPropo-Regular.ttf --symbols ÷×−+󰍹󰘶󰘴󰘵󱁐󰌒󰭜󰌑󰐥󰒭󰒮󰓛󰏤󰎇󰇪󰒲󰒳󰯪󱍖 --range 32-127,176,8226,1040-1103,1105 --format lvgl -o ergohaven_symbols_22.c
+ * Opts: --bpp 4 --size 22 --no-compress --stride 1 --align 1 --font IosevkaNerdFontPropo-Regular.ttf --symbols ÷×−+󰍹󰘶󰘴󰘵󱁐󰌒󰭜󰌑󰐥󰒭󰒮󰓛󰏤󰎇󰇪󰒲󰒳󰯪󱍖 --range 32-127,176,8226,1040-1103,1105 --format lvgl -o eh_font_iosevka_22.c
  ******************************************************************************/
 
 #ifdef __has_include
@@ -20,11 +20,11 @@
 
 
 
-#ifndef ERGOHAVEN_SYMBOLS_22
-#define ERGOHAVEN_SYMBOLS_22 1
+#ifndef EH_FONT_IOSEVKA_22
+#define EH_FONT_IOSEVKA_22 1
 #endif
 
-#if ERGOHAVEN_SYMBOLS_22
+#if EH_FONT_IOSEVKA_22
 
 /*-----------------
  *    BITMAPS
@@ -3406,9 +3406,9 @@ static lv_font_fmt_txt_dsc_t font_dsc = {
 
 /*Initialize a public general font descriptor*/
 #if LVGL_VERSION_MAJOR >= 8
-const lv_font_t ergohaven_symbols_22 = {
+const lv_font_t eh_font_iosevka_22 = {
 #else
-lv_font_t ergohaven_symbols_22 = {
+lv_font_t eh_font_iosevka_22 = {
 #endif
     .get_glyph_dsc = lv_font_get_glyph_dsc_fmt_txt,    /*Function pointer to get glyph's data*/
     .get_glyph_bitmap = lv_font_get_bitmap_fmt_txt,    /*Function pointer to get glyph's bitmap*/
@@ -3430,4 +3430,4 @@ lv_font_t ergohaven_symbols_22 = {
 
 
 
-#endif /*#if ERGOHAVEN_SYMBOLS_22*/
+#endif /*#if EH_FONT_IOSEVKA_22*/
