@@ -47,11 +47,9 @@ SRC += keyboards/ergohaven/src/display/lvgl_helpers.c
 SRC += keyboards/ergohaven/src/display/fonts/eh_font_iosevka_16.c
 SRC += keyboards/ergohaven/src/display/fonts/eh_font_iosevka_22.c
 SRC += keyboards/ergohaven/src/display/fonts/eh_font_iosevka_28.c
-SRC += keyboards/ergohaven/src/display/fonts/eh_font_montserrat_20.c
-SRC += keyboards/ergohaven/src/display/fonts/eh_font_montserrat_28.c
-SRC += keyboards/ergohaven/src/display/eh_logo.c
 SRC += keyboards/ergohaven/src/display/eh_keycode_str.c
 
 SRC += anim/anim.c
 SRC += display_modes.c
 SRC += screen_layout.c
+SRC += screen_anim.c
