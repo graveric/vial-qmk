@@ -1,10 +1,10 @@
-#include "ergohaven_display.h"
+#include "eh_display.h"
 #include "gpio.h"
 #include "hid.h"
 #include "lvgl_helpers.h"
 #include "qp.h"
 #include "ergohaven_ruen.h"
-#include "ergohaven_symbols.h"
+#include "eh_symbols.h"
 #include "ergohaven_settings.h"
 #include "ergohaven.h"
 
@@ -132,7 +132,7 @@ const char *get_layout_label(uint8_t layout) {
 static lv_obj_t *screen_splash;
 static lv_obj_t *label_version;
 
-LV_IMG_DECLARE(ergohaven_logo);
+LV_IMG_DECLARE(eh_logo);
 
 void splash_screen_init(void) {
     screen_splash = lv_obj_create(NULL);
@@ -140,7 +140,7 @@ void splash_screen_init(void) {
     use_flex_column(screen_splash);
 
     lv_obj_t *img = lv_img_create(screen_splash);
-    lv_img_set_src(img, &ergohaven_logo);
+    lv_img_set_src(img, &eh_logo);
     lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
     lv_obj_set_style_pad_top(img, 60, 0);
     lv_obj_set_style_pad_bottom(img, 60, 0);

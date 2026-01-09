@@ -1,7 +1,7 @@
 #include "ergohaven.h"
 #include "ergohaven_settings.h"
-#include "src/display/ergohaven_display.h"
-#include "src/display/ergohaven_keycode_str.h"
+#include "src/display/eh_display.h"
+#include "src/display/eh_keycode_str.h"
 #include "src/display/lvgl_helpers.h"
 
 LV_FONT_DECLARE(eh_font_iosevka_16);

@@ -8,9 +8,9 @@ BACKLIGHT_ENABLE = yes
 BACKLIGHT_DRIVER = pwm
 
 SRC += keyboards/ergohaven/src/display/lvgl_helpers.c
-SRC += keyboards/ergohaven/src/display/ergohaven_display_modes.c
-SRC += keyboards/ergohaven/src/display/ergohaven_display.c
-SRC += keyboards/ergohaven/src/display/ergohaven_logo.c
+SRC += keyboards/ergohaven/src/display/eh_display_modes.c
+SRC += keyboards/ergohaven/src/display/eh_display.c
+SRC += keyboards/ergohaven/src/display/eh_logo.c
 SRC += keyboards/ergohaven/src/display/fonts/eh_font_montserrat_20.c
 SRC += keyboards/ergohaven/src/display/fonts/eh_font_montserrat_28.c
 

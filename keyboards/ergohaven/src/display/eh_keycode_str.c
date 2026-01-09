@@ -1,8 +1,8 @@
-#include "src/display/ergohaven_keycode_str.h"
+#include "src/display/eh_keycode_str.h"
 
 #include "keycodes.h"
 #include "ergohaven.h"
-#include "ergohaven_symbols.h"
+#include "eh_symbols.h"
 #include "ergohaven_ruen.h"
 #include "ergohaven_pointing.h"
 

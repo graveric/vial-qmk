@@ -1,6 +1,6 @@
 #include "display.h"
 #include "ergohaven.h"
-#include "src/display/ergohaven_display.h"
+#include "src/display/eh_display.h"
 
 #include QMK_KEYBOARD_H
 
