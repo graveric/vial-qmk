@@ -34,7 +34,7 @@ static lv_obj_t *screen_layout;
 static lv_obj_t *key_labels[NLABELS];
 static bool      label_big[NLABELS];
 static uint16_t  label_kc[NLABELS];
-static char      label_text[NLABELS][16];
+static char      label_text[NLABELS][24];
 static lv_obj_t *label_layer_small;
 
 void screen_layout_init(void) {
@@ -160,11 +160,12 @@ void screen_layout_housekeep(void) {
     if (keycode != label_kc[lbl_idx]) {
         get_keycode_str(label_text[lbl_idx], keycode);
         int len = visible_len(label_text[lbl_idx]);
+        bool small = len <= 3;
 
-        if (len <= 4 && !label_big[lbl_idx]) {
+        if (small && !label_big[lbl_idx]) {
             label_big[lbl_idx] = true;
             lv_obj_set_style_text_font(key_labels[lbl_idx], &eh_font_montserrat_28, LV_PART_MAIN);
-        } else if (len > 4 && label_big[lbl_idx]) {
+        } else if (!small && label_big[lbl_idx]) {
             label_big[lbl_idx] = false;
             lv_obj_set_style_text_font(key_labels[lbl_idx], &eh_font_montserrat_20, LV_PART_MAIN);
         }

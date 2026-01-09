@@ -681,21 +681,21 @@ const char *mods_to_str(uint8_t mods) {
     if (ctrl && shift && alt && gui)
         mod_str = "All";
     else if (shift && alt && gui)
-        mod_str = "󰘶󰘵";
+        mod_str = "󰘶󰘵";
     else if (ctrl && alt && gui)
-        mod_str = "󰘴󰘵";
+        mod_str = "󰘴󰘵";
     else if (ctrl && shift && gui)
-        mod_str = "󰘴󰘶";
+        mod_str = "󰘴󰘶";
     else if (ctrl && shift && alt)
         mod_str = "󰘴󰘶󰘵";
     else if (alt && gui)
-        mod_str = "󰘵";
+        mod_str = "󰘵";
     else if (shift && gui)
-        mod_str = "󰘶";
+        mod_str = "󰘶";
     else if (shift && alt)
         mod_str = "󰘶󰘵";
     else if (ctrl && gui)
-        mod_str = "󰘴";
+        mod_str = "󰘴";
     else if (ctrl && shift)
         mod_str = "󰘴󰘶";
     else if (ctrl && alt)
