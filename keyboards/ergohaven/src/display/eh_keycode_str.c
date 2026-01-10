@@ -738,6 +738,111 @@ bool osm_keycode_to_str(char *str, uint16_t keycode) {
     return true;
 }
 
+bool midi_keycode_to_str(char *str, uint16_t keycode) {
+    switch (keycode) {
+        case QK_MIDI_ON:
+            sprintf(str, "MIDI\non");
+            return true;
+        case QK_MIDI_OFF:
+            sprintf(str, "MIDI\noff");
+            return true;
+        case QK_MIDI_TOGGLE:
+            sprintf(str, "MIDI\ntoggle");
+            return true;
+
+        case QK_MIDI_NOTE_C_0 ... QK_MIDI_NOTE_B_5: {
+            const char *notes[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+            int         note      = (keycode - QK_MIDI_NOTE_C_0) % 12;
+            int         octave    = (keycode - QK_MIDI_NOTE_C_0) / 12;
+            sprintf(str, "%s%d", notes[note], octave);
+            return true;
+        }
+
+        case QK_MIDI_OCTAVE_N2 ... QK_MIDI_OCTAVE_7: {
+            int octave = (int)keycode - QK_MIDI_OCTAVE_0;
+            sprintf(str, "Oct %+d", octave);
+            return true;
+        }
+        case QK_MIDI_OCTAVE_DOWN:
+            sprintf(str, "Oct");
+            return true;
+        case QK_MIDI_OCTAVE_UP:
+            sprintf(str, "Oct");
+            return true;
+
+        case QK_MIDI_TRANSPOSE_N6 ... QK_MIDI_TRANSPOSE_6: {
+            int tran = (int)keycode - QK_MIDI_TRANSPOSE_0;
+            sprintf(str, "Trans\n%+d", tran);
+            return true;
+        }
+        case QK_MIDI_TRANSPOSE_DOWN:
+            sprintf(str, "Trans\n");
+            return true;
+        case QK_MIDI_TRANSPOSE_UP:
+            sprintf(str, "Trans\n");
+            return true;
+
+        case QK_MIDI_VELOCITY_0 ... QK_MIDI_VELOCITY_10: {
+            int vel = (int)keycode - QK_MIDI_VELOCITY_0;
+            sprintf(str, "Vel %d", vel);
+            return true;
+        }
+        case QK_MIDI_VELOCITY_DOWN:
+            sprintf(str, "Vel");
+            return true;
+        case QK_MIDI_VELOCITY_UP:
+            sprintf(str, "Vel");
+            return true;
+
+        case QK_MIDI_CHANNEL_1 ... QK_MIDI_CHANNEL_16: {
+            int chan = (int)keycode - QK_MIDI_CHANNEL_1 + 1;
+            sprintf(str, "Ch %d", chan);
+            return true;
+        }
+        case QK_MIDI_CHANNEL_DOWN:
+            sprintf(str, "Ch");
+            return true;
+        case QK_MIDI_CHANNEL_UP:
+            sprintf(str, "Ch");
+            return true;
+
+        case QK_MIDI_ALL_NOTES_OFF:
+            sprintf(str, "Notes\nOff");
+            return true;
+        case QK_MIDI_SUSTAIN:
+            sprintf(str, "Sust");
+            return true;
+        case QK_MIDI_PORTAMENTO:
+            sprintf(str, "Port");
+            return true;
+        case QK_MIDI_SOSTENUTO:
+            sprintf(str, "Sost");
+            return true;
+        case QK_MIDI_SOFT:
+            sprintf(str, "Soft\nPedal");
+            return true;
+        case QK_MIDI_LEGATO:
+            sprintf(str, "Legat");
+            return true;
+        case QK_MIDI_MODULATION:
+            sprintf(str, "Modul");
+            return true;
+        case QK_MIDI_MODULATION_SPEED_DOWN:
+            sprintf(str, "Modul\n");
+            return true;
+        case QK_MIDI_MODULATION_SPEED_UP:
+            sprintf(str, "Modul\n");
+            return true;
+        case QK_MIDI_PITCH_BEND_DOWN:
+            sprintf(str, "Bend");
+            return true;
+        case QK_MIDI_PITCH_BEND_UP:
+            sprintf(str, "Bend");
+            return true;
+    }
+    return false;
+}
+
 void get_keycode_str(char *str, uint16_t keycode) {
     if (special_keycode_str(str, keycode))
         return;
@@ -747,6 +852,8 @@ void get_keycode_str(char *str, uint16_t keycode) {
         modtap_keycode_to_str(str, keycode);
     else if (IS_QK_ONE_SHOT_MOD(keycode))
         osm_keycode_to_str(str, keycode);
+    else if (IS_QK_MIDI(keycode))
+        midi_keycode_to_str(str, keycode);
     else
         sprintf(str, "Undf");
 }
