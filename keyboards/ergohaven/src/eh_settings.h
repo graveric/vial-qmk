@@ -15,6 +15,7 @@ void kb_settings_ruen_toggle_mode_set(uint8_t mode);
 
 void kb_settings_ruen_mac_layout_set(bool mac_layout);
 
+/* should override if needed */
 const char *default_layer_label(uint8_t layer);
 
 const char *layer_name(uint8_t layer);
