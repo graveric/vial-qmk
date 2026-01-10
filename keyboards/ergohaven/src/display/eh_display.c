@@ -5,7 +5,7 @@
 #include "qp.h"
 #include "ergohaven_ruen.h"
 #include "eh_symbols.h"
-#include "ergohaven_settings.h"
+#include "src/eh_settings.h"
 #include "ergohaven.h"
 
 painter_device_t display;

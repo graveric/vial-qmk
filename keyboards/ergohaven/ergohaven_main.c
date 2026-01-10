@@ -1,5 +1,5 @@
 #include "ergohaven.h"
-#include "ergohaven_settings.h"
+#include "src/eh_settings.h"
 #include "ergohaven_ruen.h"
 #include "src/oled/eh_oled.h"
 #include "ergohaven_rgb.h"

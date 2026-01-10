@@ -2,7 +2,7 @@
 #include "src/display/eh_keycode_str.h"
 #include "src/display/lvgl_helpers.h"
 #include "ergohaven.h"
-#include "ergohaven_settings.h"
+#include "src/eh_settings.h"
 
 LV_FONT_DECLARE(eh_font_montserrat_20);
 LV_FONT_DECLARE(eh_font_montserrat_28);

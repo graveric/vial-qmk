@@ -1,5 +1,5 @@
 #include "ergohaven_ruen.h"
-#include "ergohaven_settings.h"
+#include "src/eh_settings.h"
 #include "hid.h"
 
 static uint8_t cur_lang = LANG_EN;

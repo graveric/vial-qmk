@@ -1,4 +1,4 @@
-#include "ergohaven_settings.h"
+#include "eh_settings.h"
 #include "ergohaven_ruen.h"
 #include <eeconfig.h>
 #include <debug.h>

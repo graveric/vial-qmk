@@ -1,5 +1,5 @@
 #include "ergohaven.h"
-#include "ergohaven_settings.h"
+#include "src/eh_settings.h"
 #include "src/display/eh_display.h"
 #include "src/display/eh_keycode_str.h"
 #include "src/display/lvgl_helpers.h"
