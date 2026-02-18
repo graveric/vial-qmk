@@ -40,10 +40,11 @@ SRC += ../screen_layout.c
 SRC += keyboards/ergohaven/src/display/lvgl_helpers.c
 SRC += keyboards/ergohaven/src/display/eh_keycode_str.c
 SRC += keyboards/ergohaven/src/display/eh_display.c
-SRC += keyboards/ergohaven/src/display/eh_screen_splash.c
 SRC += keyboards/ergohaven/src/display/eh_screen_home.c
 SRC += keyboards/ergohaven/src/display/eh_screen_volume.c
-SRC += keyboards/ergohaven/src/display/eh_logo.c
+SRC += ../imgs/vk_on.c
+SRC += ../imgs/vk_sleep.c
+SRC += ../vk_screen_splash.c
 SRC += keyboards/ergohaven/src/display/fonts/eh_font_montserrat_20.c
 SRC += keyboards/ergohaven/src/display/fonts/eh_font_montserrat_28.c
 

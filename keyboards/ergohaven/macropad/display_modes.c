@@ -5,6 +5,36 @@
 #include "ergohaven.h"
 #include "src/display/eh_symbols.h"
 #include "src/display/eh_display.h"
+#include "src/display/lvgl_helpers.h"
+
+static lv_obj_t *screen_sleep;
+
+LV_IMG_DECLARE(vk_sleep);
+
+void sleep_screen_init(void) {
+    screen_sleep = lv_obj_create(NULL);
+    lv_obj_add_style(screen_sleep, &style_screen, 0);
+    use_flex_column(screen_sleep);
+
+    lv_obj_t *img = lv_img_create(screen_sleep);
+    lv_img_set_src(img, &vk_sleep);
+    lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_style_pad_top(img, 10, 0);
+    lv_obj_set_style_pad_bottom(img, 10, 0);
+}
+
+void sleep_screen_load(void) {
+    lv_scr_load(screen_sleep);
+}
+
+void sleep_screen_housekeep(void) {
+}
+
+const eh_screen_t vk_screen_sleep = {
+    .init      = sleep_screen_init,
+    .load      = sleep_screen_load,
+    .housekeep = sleep_screen_housekeep,
+};
 
 extern const eh_screen_t eh_screen_layout;
 
@@ -14,6 +44,7 @@ typedef enum {
     SCREEN_OFF = -1,
     SCREEN_SPLASH,
     SCREEN_LAYOUT,
+    SCREEN_SLEEP,
     SCREEN_VOLUME,
     SCREEN_HOME,
 } screen_t;
@@ -28,6 +59,7 @@ void display_init_screens_kb(void) {
     eh_screen_layout.init();
     eh_screen_home.init();
     eh_screen_volume.init();
+    vk_screen_sleep.init();
     current_screen      = eh_screen_splash;
     change_screen_state = SCREEN_SPLASH;
     screen_state        = SCREEN_SPLASH;
@@ -76,6 +108,14 @@ void display_housekeeping_task(void) {
             case SCREEN_LAYOUT:
                 if (hid_active && activity_elapsed > EH_DISPLAY_TIMEOUT_ACTIVITY) {
                     change_screen_state = SCREEN_HOME;
+                } else if (activity_elapsed > 10 * 1000) {
+                    change_screen_state = SCREEN_SLEEP;
+                }
+                break;
+
+            case SCREEN_SLEEP:
+                if (hid_active && activity_elapsed > EH_DISPLAY_TIMEOUT_ACTIVITY) {
+                    change_screen_state = SCREEN_HOME;
                 } else if (activity_elapsed > EH_TIMEOUT) {
                     change_screen_state = SCREEN_OFF;
                 }
@@ -117,6 +157,10 @@ void display_housekeeping_task(void) {
                 break;
             case SCREEN_LAYOUT:
                 current_screen = eh_screen_layout;
+                display_turn_on();
+                break;
+            case SCREEN_SLEEP:
+                current_screen = vk_screen_sleep;
                 display_turn_on();
                 break;
             case SCREEN_VOLUME:

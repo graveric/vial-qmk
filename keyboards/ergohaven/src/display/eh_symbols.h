@@ -58,3 +58,5 @@
 #define EH_SYMBOL_BL "󱍖"
 #define EH_SYMBOL_OFF ""
 #define EH_SYMBOL_ON ""
+#define EH_SYMBOL_ON ""
+#define EH_SYMBOL_VK ""

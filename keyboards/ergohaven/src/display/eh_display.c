@@ -27,7 +27,7 @@ bool is_display_enabled(void) {
 
 __attribute__((weak)) void display_init_styles_kb(void) {
     accent_color_red       = lv_color_make(248, 83, 107);
-    accent_color_blue      = lv_color_make(84, 189, 191);
+    accent_color_blue      = lv_color_make(0, 119, 255);
     lv_disp_t  *lv_display = lv_disp_get_default();
     lv_theme_t *lv_theme   = lv_theme_default_init(lv_display, accent_color_blue, accent_color_red, true, LV_FONT_DEFAULT);
     lv_disp_set_theme(lv_display, lv_theme);
@@ -107,7 +107,7 @@ void display_turn_off(void) {
 
 const char *get_layer_label(uint8_t layer) {
     static char buf[32];
-    sprintf(buf, EH_SYMBOL_LAYER " %s", layer_name(layer));
+    sprintf(buf, EH_SYMBOL_VK " %s", layer_name(layer));
     return buf;
 }
 
