@@ -27,8 +27,7 @@ void sleep_screen_load(void) {
     lv_scr_load(screen_sleep);
 }
 
-void sleep_screen_housekeep(void) {
-}
+void sleep_screen_housekeep(void) {}
 
 const eh_screen_t vk_screen_sleep = {
     .init      = sleep_screen_init,
@@ -114,7 +113,7 @@ void display_housekeeping_task(void) {
                 break;
 
             case SCREEN_SLEEP:
-                if (hid_active && activity_elapsed > EH_DISPLAY_TIMEOUT_ACTIVITY) {
+                if (activity_elapsed < 10 * 1000) {
                     change_screen_state = SCREEN_HOME;
                 } else if (activity_elapsed > EH_TIMEOUT) {
                     change_screen_state = SCREEN_OFF;
