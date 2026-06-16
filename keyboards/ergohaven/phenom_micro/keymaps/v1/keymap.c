@@ -778,6 +778,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 set_mods(cur_mods_c);            
             }
+            is_arcane = false;
             return false;
         case GR_UNDER:
             if (record->event.pressed) {
@@ -797,6 +798,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 set_mods(cur_mods_c);            
             }
+            is_arcane = false;
             return false;                    
         case GR_MINUS:
             if (record->event.pressed) {
@@ -816,6 +818,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 set_mods(cur_mods_c);      
             }
+            is_arcane = false;
             return false;
         case GR_SLASH:
             if (record->event.pressed) {
@@ -835,6 +838,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 set_mods(cur_mods_c);            
             }
+            is_arcane = false;
             return false;            
         case GR_COMMA:
             if (record->event.pressed) {
@@ -859,6 +863,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 set_mods(cur_mods_c);
             }
+            is_arcane = false;
             return false;
         case GR_DOT:
             if (record->event.pressed) {
@@ -890,6 +895,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 set_mods(cur_mods_c);
             }
+            is_arcane = false;
             return false;
         case GR_ALT1:
             if (record->event.pressed) {
@@ -938,6 +944,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 set_mods(cur_mods_c);
             }
+            is_arcane = false;
             return false;  
         case GR_CBR:
             if (record->event.pressed) {
@@ -957,6 +964,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 set_mods(cur_mods_c);
             }
+            is_arcane = false;
             return false; 
         case GR_PR:
             if (record->event.pressed) {
@@ -976,6 +984,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 set_mods(cur_mods_c);
             }
+            is_arcane = false;
             return false;             
         default:
             return true;    
