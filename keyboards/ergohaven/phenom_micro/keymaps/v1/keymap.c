@@ -26,25 +26,30 @@ enum hpd_keycodes {
   GR_MINUS, 
   GR_SLASH, 
   GR_INCH, 
-  GR_UNDER, 
+  GR_UNDER, //0x7e45
   GR_ALT1, 
   GR_ALT2, 
-  GR_SBR,
+  GR_SBR, //0x7e48
   GR_CBR,
-  GR_PR,
+  GR_PR,  //0x7e4a
+  SW_TAB, //0x7e4b
+  SW_WIN //0x7e4c
 };
 
-static uint16_t last_keys[2] = {KC_NO, KC_NO};
+/*static uint16_t last_keys[2] = {KC_NO, KC_NO};
 static uint8_t last_mods = 0;
-static bool is_arcane = false;
+static bool is_arcane = false;*/
 
+
+bool sw_win_active = false;
+bool sw_tab_active = false; 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT(
 KC_J,     KC_Y,     KC_A,     KC_U,     GR_MINUS,                                          KC_Q,     KC_G,     KC_N,     KC_F,     KC_K,
-KC_H,     KC_I, LCTL_T(KC_O), KC_E,     GR_DOT,                                            KC_P,     KC_D, LCTL_T(KC_R), KC_S,     KC_M, 
+KC_H,     KC_I,     KC_O,     KC_E,     GR_DOT,                                            KC_P,     KC_D,     KC_R,     KC_S,     KC_M, 
 KC_X,     GR_UNDER, GR_INCH,  GR_COMMA, GR_SLASH,                                          KC_B,     KC_C,     KC_L,     KC_W,     KC_V,
-          KC_BTN2,   KC_BTN1, LT(_SHCUT, KC_TAB),  GR_ALT1,    LT(_NAVI, KC_SPC),          LT(_SYM1, KC_T),   GR_ALT2,   LT(_SHCUT, KC_ESC),   KC_BTN1,  KC_BTN2,
+          LCTL_T(KC_BTN2),   KC_BTN1, KC_LSFT,    LT(_NAVI, KC_SPC), LT(_SHCUT, KC_TAB),           LT(_SYM2, KC_ESC), LT(_SYM1, KC_T),   KC_RSFT,     KC_LALT,  KC_LCTL,
                                                             KC_MUTE,            KC_MUTE
     ),
     
@@ -52,15 +57,15 @@ KC_X,     GR_UNDER, GR_INCH,  GR_COMMA, GR_SLASH,                               
 KC_A,     KC_E,     KC_F,     KC_DOT,   GR_MINUS,                                          KC_I,     KC_V,     KC_Y,     KC_R,     KC_P,
 KC_Z,     KC_B, LCTL_T(KC_J), KC_T,     GR_DOT,                                            KC_U,     KC_N, LCTL_T(KC_H), KC_D,     KC_X, 
 KC_Q,     KC_S,     KC_M,     GR_COMMA, KC_GRV,                                            KC_COMMA, KC_L,     KC_K,     KC_G,     KC_SEMICOLON,
-          KC_BTN2,   KC_BTN1, _______,  _______, _______,                                  LT(_SYM1, KC_C),    _______,  _______,  KC_BTN1,  KC_BTN2,
+          _______,   _______, _______,  _______, _______,                                  _______,  LT(_SYM1, KC_C),    _______,  _______,  _______,
                                                             KC_MUTE,            KC_MUTE
     ),    
 
     [_NAVI] = LAYOUT(
 LSFT(KC_DEL), LSFT(KC_HOME), LSFT(KC_UP), LSFT(KC_END), LSFT(LCTL(KC_HOME)),              LCTL(KC_HOME),     KC_HOME,     KC_UP,     KC_END,     KC_PGUP,
 LSFT(LCTL(KC_K)), KC_LEFT, KC_DOWN, KC_RIGHT, LSFT(LCTL(KC_END)),                         LCTL(KC_END),      KC_LEFT,     KC_DOWN,   KC_RIGHT,   KC_PGDN,
-MO(_KHRN),  _______,   _______,  KC_DEL,  LSFT(KC_ENTER),                                 KC_ENTER,  KC_BSPC,  LCTL(KC_BSPC),  KC_INS,  LT(_KHRN, KC_PSCR),
-          KC_LSFT,  KC_LCTL,  _______,  _______,  _______,                                MO(_SYM2),  KC_LALT,  LT(KC_ESC, _UNI),  KC_LCTL,  KC_RSFT,
+MO(_KHRN),  _______,   _______,  KC_DEL,  SW_TAB,                                         KC_ENTER,  KC_BSPC,   LCTL(KC_BSPC),  KC_INS,  LT(_KHRN, KC_PSCR),
+          KC_LSFT,  KC_LCTL,  _______,  _______,  _______,                                KC_LALT,   MO(_UNI), LT(KC_ESC, _UNI),  KC_LCTL,  KC_RSFT,
                                                             _______,            _______
     ),
 
@@ -68,7 +73,7 @@ MO(_KHRN),  _______,   _______,  KC_DEL,  LSFT(KC_ENTER),                       
 KC_BSLS,    RALT(KC_E), RALT(KC_F), RALT(KC_COMMA), RALT(KC_DOT),               LSFT(KC_1),  RALT(KC_1),       RALT(KC_Y),       RALT(KC_R),  RALT(KC_BSLS),
 RALT(KC_H), RALT(KC_B), RALT(KC_J), KC_LPRN,        KC_RPRN,                    RALT(KC_U),  RALT(LSFT(KC_8)), RALT(LSFT(KC_7)), RALT(KC_7),  LSFT(KC_5),
 RALT(KC_6), RALT(KC_S), RALT(KC_L), KC_EQL,         RALT(LSFT(KC_L)),           LSFT(KC_3),  RALT(KC_4),       _______,          LSFT(KC_2),  RALT(LSFT(KC_GRV)),
-        KC_VOLU,  KC_VOLD,  LT(_UNI, KC_TAB),  _______,   LT(_SYM2, KC_SPC),    _______,  _______,  _______,  KC_MPRV,  KC_MNXT,
+        KC_VOLU,  KC_VOLD,  LT(_UNI, KC_TAB), LT(_UNI, KC_SPC),  _______,      _______,  _______,  _______,  KC_MPRV,  KC_MNXT,
                                                             _______,            _______
     ),
     
@@ -146,7 +151,45 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
 };
 #endif
 
-void send_arcane(const char *string, uint16_t code2, uint16_t code1) {
+// Implements cmd-tab like behaviour on a single key. On first tap of trigger
+// cmdish is held and tabish is tapped -- cmdish then remains held until some
+// other key is hit or released. For example:
+//
+//     trigger, trigger, a -> cmd down, tab, tab, cmd up, a
+//     nav down, trigger, nav up -> nav down, cmd down, tab, cmd up, nav up
+//
+// This behaviour is useful for more than just cmd-tab, hence: cmdish, tabish.
+void update_swapper(
+    bool *active,
+    uint16_t cmdish,
+    uint16_t tabish,
+    uint16_t trigger,
+    uint16_t reverse_key,
+    uint16_t keycode,
+    keyrecord_t *record
+) {
+    if (keycode == trigger) {
+        if (record->event.pressed) {
+            if (!*active) {
+                *active = true;
+                register_code(cmdish);
+            }
+            register_code(tabish);
+        } else {
+            unregister_code(tabish);
+            // Don't unregister cmdish until some other key is hit or released.
+        }
+    } else if (*active
+        && keycode != reverse_key
+        && keycode != KC_LEFT
+        && keycode != KC_RIGHT
+    ) {
+        unregister_code(cmdish);
+        *active = false;
+    }
+}
+
+/*void send_arcane(const char *string, uint16_t code2, uint16_t code1) {
     //is_arcane = true;
     send_string(string);
     last_keys[0] = code1;
@@ -745,11 +788,21 @@ void get_arcane_bi_right(void) {
             set_oneshot_mods(one_mods_c);
             break;    
     }
-}
+}*/
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     //static uint16_t alt1_timer;
     // static uint16_t alt2_timer;
+    
+    update_swapper(
+        &sw_win_active, KC_LALT, KC_TAB, SW_WIN, KC_LSFT,
+        keycode, record
+    );
+    update_swapper(
+        &sw_tab_active, KC_LCTL, KC_TAB, SW_TAB, KC_LSFT,
+        keycode, record
+    );
+
     switch (keycode) {
         case GR_INCH:
             if (record->event.pressed) {
@@ -765,20 +818,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     } else {
                         send_string("'");  
                     }
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_QUOT;                    
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_QUOT;                    
                 } else {
                     if (ruon) {
                         tap_code16(RALT(KC_2));
                     } else {
                         send_string("\"");
                     }
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_DQUO;
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_DQUO;
                 }
                 set_mods(cur_mods_c);            
             }
-            is_arcane = false;
+            //is_arcane = false;
             return false;
         case GR_UNDER:
             if (record->event.pressed) {
@@ -787,18 +840,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 clear_oneshot_mods();
                 clear_mods();
                 if (mods_c & MOD_MASK_SHIFT) {
-                    //с шифтом `
-                    last_keys[1] = last_keys[0];
+                    //с шифтом ` - убрали
+                    /*last_keys[1] = last_keys[0];
                     last_keys[0] = KC_GRV;
-                    tap_code16(RALT(KC_GRV));
+                    tap_code16(RALT(KC_GRV));*/
+                    
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_DOT;
+                    tap_code(KC_MINUS);
+                    tap_code16(RALT(LSFT(KC_L)));
+
                 } else {
                     send_string("_");
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_UNDS;
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_UNDS;
                 }
                 set_mods(cur_mods_c);            
             }
-            is_arcane = false;
+            //is_arcane = false;
             return false;                    
         case GR_MINUS:
             if (record->event.pressed) {
@@ -808,17 +867,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 clear_mods();
                 if (mods_c & MOD_MASK_SHIFT) {
                     //с шифтом +
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_PLUS;                    
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_PLUS;                    
                     send_string("+");                    
                 } else {
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_MINUS;
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_MINUS;
                     send_string("-");
                 }
                 set_mods(cur_mods_c);      
             }
-            is_arcane = false;
+            //is_arcane = false;
             return false;
         case GR_SLASH:
             if (record->event.pressed) {
@@ -829,16 +888,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (mods_c & MOD_MASK_SHIFT) {
                     //с шифтом *
                     send_string("*"); 
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_ASTR;
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_ASTR;
                 } else {
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_SLASH;                            
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_SLASH;                            
                     tap_code16(get_cur_lang() == LANG_EN ? KC_SLASH : LSFT(KC_BSLS));
                 }
                 set_mods(cur_mods_c);            
             }
-            is_arcane = false;
+            //is_arcane = false;
             return false;            
         case GR_COMMA:
             if (record->event.pressed) {
@@ -848,8 +907,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 clear_mods();
                 if (mods_c & MOD_MASK_SHIFT) {
                     //с шифтом просто запятая
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_COMMA;
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_COMMA;
                     tap_code16(RALT(LSFT(KC_5)));
                 } else {
                     if (get_cur_lang() == LANG_RU) {
@@ -858,12 +917,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         tap_code(KC_COMMA);
                     }
                     tap_code(KC_SPC);
-                    last_keys[1] = KC_COMMA;
-                    last_keys[0] = KC_SPACE;
+                    //last_keys[1] = KC_COMMA;
+                    //last_keys[0] = KC_SPACE;
                 }
                 set_mods(cur_mods_c);
             }
-            is_arcane = false;
+            //is_arcane = false;
             return false;
         case GR_DOT:
             if (record->event.pressed) {
@@ -872,8 +931,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 clear_oneshot_mods();
                 clear_mods();
                 if (mods_c & MOD_MASK_SHIFT) {
-                    //с шифтом точка и shift
-                    last_keys[1] = KC_DOT;
+                    //с шифтом точка и shift - убрали
+                    /*last_keys[1] = KC_DOT;
                     last_keys[0] = KC_SPACE;
                     if (get_cur_lang() == LANG_RU) {
                         tap_code(KC_SLASH);
@@ -881,23 +940,28 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         tap_code(KC_DOT);
                     }
                     tap_code(KC_SPACE);
-                    set_oneshot_mods(MOD_BIT(KC_LSFT));
+                    set_oneshot_mods(MOD_BIT(KC_LSFT));*/
+                    
+                    // с шифтом `
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_GRV;
+                    tap_code16(RALT(KC_GRV));                    
                 } else {
                     // .
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_DOT;
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_DOT;
                     if (get_cur_lang() == LANG_RU) {
                         tap_code(KC_SLASH);
-                        last_keys[0] = KC_SLASH;
+                        //last_keys[0] = KC_SLASH;
                     } else {
                         tap_code(KC_DOT);
                     }
                 }
                 set_mods(cur_mods_c);
             }
-            is_arcane = false;
+            //is_arcane = false;
             return false;
-        case GR_ALT1:
+        /*case GR_ALT1:
             if (record->event.pressed) {
                 //alt1_timer = timer_read();
                 is_arcane = true;
@@ -925,7 +989,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 //}
             }
-            return false;
+            return false; */
         case GR_SBR:
             if (record->event.pressed) {
                 uint8_t cur_mods_c = get_mods();
@@ -934,17 +998,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 clear_mods();
                 if (mods_c & MOD_MASK_SHIFT) {
                     //с шифтом 
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_RBRC;
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_RBRC;
                     tap_code16(RALT(KC_RBRC));
                 } else {
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_LBRC;
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_LBRC;
                     tap_code16(RALT(KC_LBRC));
                 }
                 set_mods(cur_mods_c);
             }
-            is_arcane = false;
+            //is_arcane = false;
             return false;  
         case GR_CBR:
             if (record->event.pressed) {
@@ -954,17 +1018,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 clear_mods();
                 if (mods_c & MOD_MASK_SHIFT) {
                     //с шифтом 
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_RBRC;
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_RBRC;
                     tap_code16(RALT(LSFT(KC_RBRC)));
                 } else {
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_LBRC;
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_LBRC;
                     tap_code16(RALT(LSFT(KC_LBRC)));
                 }
                 set_mods(cur_mods_c);
             }
-            is_arcane = false;
+            //is_arcane = false;
             return false; 
         case GR_PR:
             if (record->event.pressed) {
@@ -974,31 +1038,37 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 clear_mods();
                 if (mods_c & MOD_MASK_SHIFT) {
                     //с шифтом 
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_RPRN;
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_RPRN;
                     tap_code16(KC_RPRN);
                 } else {
-                    last_keys[1] = last_keys[0];
-                    last_keys[0] = KC_LPRN;
+                    //last_keys[1] = last_keys[0];
+                    //last_keys[0] = KC_LPRN;
                     tap_code16(KC_LPRN);
                 }
                 set_mods(cur_mods_c);
             }
-            is_arcane = false;
-            return false;             
+            //is_arcane = false;
+            return false;
+        /*case GR_BREST:
+            if (record->event.pressed) {
+                set_split_pointing_side_mode(SPLIT_POINTING_SIDE_LEFT, POINTING_MODE_SCROLL);
+                set_split_pointing_side_mode(SPLIT_POINTING_SIDE_RIGHT, POINTING_MODE_NORMAL);                
+            }
+            is_arcane = false;*/
         default:
             return true;    
     }
 }
 
 
-void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+/*void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {// && !is_arcane) {
         last_keys[1] = last_keys[0];
         last_keys[0] = keycode & 0xFF;
         is_arcane = false;
     }
-}
+}*/
 
 
 /*

@@ -1,11 +1,42 @@
 #include QMK_KEYBOARD_H
 #include "ergohaven.h"
 #include "src/eh_pointing.h"
+#include "src/eh_ruen.h"
+
+#define _RUS 1
+#define _NAVI 2
+#define _SYM1 3
+#define _SYM2 4
+#define _UNI 5
+#define _SHCUT 6
+#define _KHRN 7
+#define _FDIN 8
+#define _ADJST 9
+#define _MICE 10
+
+enum hpd_keycodes {
+  GR_DOT = SAFE_RANGE,
+  GR_COMMA, 
+  GR_MINUS, 
+  GR_SLASH, 
+  GR_INCH, 
+  GR_UNDER, //0x7e45
+  GR_ALT1, 
+  GR_ALT2, 
+  GR_SBR, //0x7e48
+  GR_CBR,
+  GR_PR,  //0x7e4a
+  SW_TAB, //0x7e4b
+  SW_WIN //0x7e4c
+};
+
+bool sw_win_active = false;
+bool sw_tab_active = false; 
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT(
-KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,                                             KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_BSPC,
+KC_ESC,   KC_J,     KC_Y,     KC_A,     KC_U,     GR_MINUS,                                             KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_BSPC,
 KC_ESC,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,                                             KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_BSLS,
 KC_TAB,   KC_A,     KC_S,     KC_D,     KC_F,     KC_G,                                             KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,
 KC_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,                                             KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT,
@@ -60,3 +91,218 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
     [4] = {ENCODER_CCW_CW(_______, _______)}, //
 };
 #endif
+
+// Implements cmd-tab like behaviour on a single key. On first tap of trigger
+// cmdish is held and tabish is tapped -- cmdish then remains held until some
+// other key is hit or released. For example:
+//
+//     trigger, trigger, a -> cmd down, tab, tab, cmd up, a
+//     nav down, trigger, nav up -> nav down, cmd down, tab, cmd up, nav up
+//
+// This behaviour is useful for more than just cmd-tab, hence: cmdish, tabish.
+void update_swapper(
+    bool *active,
+    uint16_t cmdish,
+    uint16_t tabish,
+    uint16_t trigger,
+    uint16_t reverse_key,
+    uint16_t keycode,
+    keyrecord_t *record
+) {
+    if (keycode == trigger) {
+        if (record->event.pressed) {
+            if (!*active) {
+                *active = true;
+                register_code(cmdish);
+            }
+            register_code(tabish);
+        } else {
+            unregister_code(tabish);
+            // Don't unregister cmdish until some other key is hit or released.
+        }
+    } else if (*active
+        && keycode != reverse_key
+        && keycode != KC_LEFT
+        && keycode != KC_RIGHT
+    ) {
+        unregister_code(cmdish);
+        *active = false;
+    }
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+
+    update_swapper(
+        &sw_win_active, KC_LALT, KC_TAB, SW_WIN, KC_LSFT,
+        keycode, record
+    );
+    update_swapper(
+        &sw_tab_active, KC_LCTL, KC_TAB, SW_TAB, KC_LSFT,
+        keycode, record
+    );
+
+    switch (keycode) {
+        case GR_INCH:
+            if (record->event.pressed) {
+                bool ruon = (get_cur_lang() == LANG_RU);
+                uint8_t cur_mods_c = get_mods();
+                uint8_t mods_c = cur_mods_c | get_oneshot_mods();
+                clear_oneshot_mods();
+                clear_mods();
+                if (mods_c & MOD_MASK_SHIFT) {
+                    //с шифтом '
+                    if (ruon) {
+                        tap_code16(RSA(KC_2));
+                    } else {
+                        send_string("'");  
+                    }
+                } else {
+                    if (ruon) {
+                        tap_code16(RALT(KC_2));
+                    } else {
+                        send_string("\"");
+                    }
+                }
+                set_mods(cur_mods_c);            
+            }
+            return false;
+        case GR_UNDER:
+            if (record->event.pressed) {
+                uint8_t cur_mods_c = get_mods();
+                uint8_t mods_c = cur_mods_c | get_oneshot_mods();
+                clear_oneshot_mods();
+                clear_mods();
+                if (mods_c & MOD_MASK_SHIFT) {
+                    // ->
+                    tap_code(KC_MINUS);
+                    tap_code16(RALT(LSFT(KC_L)));
+
+                } else {
+                    send_string("_");
+                }
+                set_mods(cur_mods_c);            
+            }
+            return false;                    
+        case GR_MINUS:
+            if (record->event.pressed) {
+                uint8_t cur_mods_c = get_mods();
+                uint8_t mods_c = cur_mods_c | get_oneshot_mods();
+                clear_oneshot_mods();
+                clear_mods();
+                if (mods_c & MOD_MASK_SHIFT) {
+                    //с шифтом +
+                    send_string("+");                    
+                } else {
+                    send_string("-");
+                }
+                set_mods(cur_mods_c);      
+            }
+            return false;
+        case GR_SLASH:
+            if (record->event.pressed) {
+                uint8_t cur_mods_c = get_mods();
+                uint8_t mods_c = cur_mods_c | get_oneshot_mods();
+                clear_oneshot_mods();
+                clear_mods();
+                if (mods_c & MOD_MASK_SHIFT) {
+                    //с шифтом *
+                    send_string("*"); 
+                } else {
+                    tap_code16(get_cur_lang() == LANG_EN ? KC_SLASH : LSFT(KC_BSLS));
+                }
+                set_mods(cur_mods_c);            
+            }
+            //is_arcane = false;
+            return false;            
+        case GR_COMMA:
+            if (record->event.pressed) {
+                uint8_t cur_mods_c = get_mods();
+                uint8_t mods_c = cur_mods_c | get_oneshot_mods();
+                clear_oneshot_mods();
+                clear_mods();
+                if (mods_c & MOD_MASK_SHIFT) {
+                    //с шифтом просто запятая
+                    tap_code16(RALT(LSFT(KC_5)));
+                } else {
+                    if (get_cur_lang() == LANG_RU) {
+                        send_string("?");
+                    } else {
+                        tap_code(KC_COMMA);
+                    }
+                    tap_code(KC_SPC);
+                }
+                set_mods(cur_mods_c);
+            }
+            return false;
+        case GR_DOT:
+            if (record->event.pressed) {
+                uint8_t cur_mods_c = get_mods();
+                uint8_t mods_c = cur_mods_c | get_oneshot_mods();
+                clear_oneshot_mods();
+                clear_mods();
+                if (mods_c & MOD_MASK_SHIFT) {                    
+                    // с шифтом `
+                    tap_code16(RALT(KC_GRV));                    
+                } else {
+                    // .
+                    if (get_cur_lang() == LANG_RU) {
+                        tap_code(KC_SLASH);
+                    } else {
+                        tap_code(KC_DOT);
+                    }
+                }
+                set_mods(cur_mods_c);
+            }
+            return false;
+
+        case GR_SBR:
+            if (record->event.pressed) {
+                uint8_t cur_mods_c = get_mods();
+                uint8_t mods_c = cur_mods_c | get_oneshot_mods();
+                clear_oneshot_mods();
+                clear_mods();
+                if (mods_c & MOD_MASK_SHIFT) {
+                    //с шифтом 
+                    tap_code16(RALT(KC_RBRC));
+                } else {
+                    tap_code16(RALT(KC_LBRC));
+                }
+                set_mods(cur_mods_c);
+            }
+            return false;  
+        case GR_CBR:
+            if (record->event.pressed) {
+                uint8_t cur_mods_c = get_mods();
+                uint8_t mods_c = cur_mods_c | get_oneshot_mods();
+                clear_oneshot_mods();
+                clear_mods();
+                if (mods_c & MOD_MASK_SHIFT) {
+                    //с шифтом 
+                    tap_code16(RALT(LSFT(KC_RBRC)));
+                } else {
+                    tap_code16(RALT(LSFT(KC_LBRC)));
+                }
+                set_mods(cur_mods_c);
+            }
+            return false; 
+        case GR_PR:
+            if (record->event.pressed) {
+                uint8_t cur_mods_c = get_mods();
+                uint8_t mods_c = cur_mods_c | get_oneshot_mods();
+                clear_oneshot_mods();
+                clear_mods();
+                if (mods_c & MOD_MASK_SHIFT) {
+                    //с шифтом 
+                    tap_code16(KC_RPRN);
+                } else {
+                    tap_code16(KC_LPRN);
+                }
+                set_mods(cur_mods_c);
+            }
+            return false;
+
+        default:
+            return true;    
+    }  
+
+}
