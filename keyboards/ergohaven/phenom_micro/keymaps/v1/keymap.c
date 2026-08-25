@@ -181,8 +181,8 @@ void update_swapper(
         }
     } else if (*active
         && keycode != reverse_key
-        && keycode != KC_LEFT
-        && keycode != KC_RIGHT
+        && keycode != KC_UP
+        && keycode != KC_DOWN
     ) {
         unregister_code(cmdish);
         *active = false;

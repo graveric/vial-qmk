@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case "${1:-}" in
+  hpd)
+    qmk compile -kb ergohaven/hpd/rev2 -km v2_enc_ball
+    ;;
+  macro)
+    qmk compile -kb ergohaven/macropad/rev2 -km v2
+    ;;
+  plank)
+    qmk compile -kb umux/p48s/v2 -km vial
+    ;;
+  burnplanck)
+    qmk flash -kb umux/p48s/v2 -km vial
+    ;;
+  phenom)
+    qmk compile -kb ergohaven/phenom_micro/rev1 -km v1
+    ;;
+  *)
+    exit 0
+    ;;
+esac
+
+mv -f ./*.uf2 ./*.hex ./*.bin ./*.eep ./*.lz ./*.zip /home/graveric/keyboard/firmware/ 2>/dev/null || true

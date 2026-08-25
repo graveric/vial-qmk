@@ -57,3 +57,5 @@
 
 #undef PRODUCT
 #define PRODUCT "HPD v2 enc/ball"
+
+#define VIAL_COMBO_ENTRIES 72
