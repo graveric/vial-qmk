@@ -840,15 +840,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 clear_oneshot_mods();
                 clear_mods();
                 if (mods_c & MOD_MASK_SHIFT) {
-                    //с шифтом ` - убрали
                     /*last_keys[1] = last_keys[0];
                     last_keys[0] = KC_GRV;
-                    tap_code16(RALT(KC_GRV));*/
+                    */
                     
                     //last_keys[1] = last_keys[0];
                     //last_keys[0] = KC_DOT;
-                    tap_code(KC_MINUS);
-                    tap_code16(RALT(LSFT(KC_L)));
+                    
+                    //tap_code(KC_MINUS);
+                    //tap_code16(RALT(LSFT(KC_L)));
+
+                    //с шифтом ` 
+                    tap_code16(RALT(KC_GRV));
 
                 } else {
                     send_string("_");
@@ -942,20 +945,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     tap_code(KC_SPACE);
                     set_oneshot_mods(MOD_BIT(KC_LSFT));*/
                     
-                    // с шифтом `
-                    //last_keys[1] = last_keys[0];
-                    //last_keys[0] = KC_GRV;
-                    tap_code16(RALT(KC_GRV));                    
+                    //с шифтом точка, enter, ⇧
+                    tap_code16(RALT(LSFT(KC_C)));
+                    tap_code(KC_ENTER);
+                    set_oneshot_mods(MOD_BIT(KC_LSFT));
                 } else {
                     // .
                     //last_keys[1] = last_keys[0];
                     //last_keys[0] = KC_DOT;
-                    if (get_cur_lang() == LANG_RU) {
-                        tap_code(KC_SLASH);
+                    //if (get_cur_lang() == LANG_RU) {
+                    //    tap_code(KC_SLASH);
                         //last_keys[0] = KC_SLASH;
-                    } else {
-                        tap_code(KC_DOT);
-                    }
+                    //} else {
+                        //tap_code(KC_DOT);
+                    //}
+                    
+                    // точка, enter, ⇧
+                    tap_code16(RALT(LSFT(KC_C)));
+                    tap_code(KC_SPACE);
+                    set_oneshot_mods(MOD_BIT(KC_LSFT));
                 }
                 set_mods(cur_mods_c);
             }
